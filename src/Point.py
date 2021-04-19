@@ -8,5 +8,5 @@ class Point(object):
         self.Y = y
         self.Value = value
     
-    def show(self):
-        print(f"[{self.X}, {self.Y}]: {self.Value}")
+    def getString(self):
+        return f"[{self.X}, {self.Y}]: {self.Value}"

@@ -1,6 +1,6 @@
 
 
-
+from src.Map import Map
 
 if __name__ == "__main__":
     # take in csv/xlsx
@@ -13,4 +13,9 @@ if __name__ == "__main__":
 
     # return/present new map
 
-    pass
+
+    # test
+    
+    M = Map()
+    M.readFromCsv("test.csv")
+    M.show()

@@ -1,10 +1,13 @@
-# topography :map:  
+# topography :earth_americas:  
+
+![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)
+[![Build Status](https://travis-ci.com/XDwightsBeetsX/topography.svg?branch=master)](https://travis-ci.com/XDwightsBeetsX/topography)
 
 Contains different approaches to modeling terrain and maps in python
 
-> Requirements:
->
-> - `.csv` file with incomplete sampled terrain
+Requirements:  
+
+- `.csv` file with incomplete sampled terrain
 
 ## Inverse Distance Weighting  
 

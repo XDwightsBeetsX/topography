@@ -1,11 +1,16 @@
-# Development Environments
+# ========================= #
+# ======== Dev Envs ======= #
+# ========================= #
+.git
+.github
+.idea
+__pycache__
 .vscode
 .vs
-.idea
-.git
 
-
-# Releases
+# ========================= #
+# ========== Pkg ========== #
+# ========================= #
 .egg
 .wheel
 .distro

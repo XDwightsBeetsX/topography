@@ -3,13 +3,12 @@ Map is primary data struct of topography
 Stores known points, and allows for performing various interpolation schemes on the raw data.  
 """
 
-
 from .Point import Point
-
+# from .interpolate import *
 
 class Map(object):
     """
-    initialize with list of known points and optionally the size of desired map output  
+    initialize with list of known Points and optionally the size of desired map output  
 
         - Read points from csv  
         - Print points to csv  
@@ -64,3 +63,22 @@ class Map(object):
     def show(self):
         for pt in self.RawData:
             print(f"[{pt.X}, {pt.Y}] {pt.Value}")
+
+    def idw(self):
+        """
+        Performs Inverse Distance Weighted Interpolation
+            Saves a .csv map to file
+
+        Start with creating a matrix just large enough.
+            TODO Deal with user-input map sizes later
+            TODO Make cache for different interpolation schemes later
+        """
+        # create matrix of proper size
+
+        # populate matrix by iterating through known Points self.RawData
+
+        # ouput to file
+
+        # show plot of interpolated values
+
+        pass

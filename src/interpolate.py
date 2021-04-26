@@ -1,17 +1,8 @@
+"""
+Contains utility and math methods for use by Map
+"""
 
 import numpy as np
-
-
-def idw(Map):
-    pass
-
-
-def nearest_neighbor(Map):
-    pass
-
-
-def spline(Map):
-    pass
 
 
 def euclidian_distance(ptA, ptB):

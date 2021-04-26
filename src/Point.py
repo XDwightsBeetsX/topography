@@ -1,5 +1,6 @@
-
-
+"""
+Low level data structure for euclidian point-values
+"""
 
 
 class Point(object):

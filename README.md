@@ -16,7 +16,7 @@ A given point `P(x, y)` is determined by the values of its neighbors, inversely 
 This ensures a `P` is more dependent on nearer points.  
 
 - Weighting function `W(x, y)`
-  - Normalized by `ln(x, y)`
+  - Normalized by `exp(-d(x, y))`
 
 ## Nearest (Natural) Neighbor  
 

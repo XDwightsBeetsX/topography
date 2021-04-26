@@ -1,4 +1,5 @@
 # used packages
+numpy
 
 # testing
 pytest

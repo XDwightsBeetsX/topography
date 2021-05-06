@@ -3,7 +3,7 @@ Map is primary data struct of topography
 Stores known points, and allows for performing various interpolation schemes on the raw data.  
 """
 
-from .Point import Point
+from Point import Point
 # from .interpolate import *
 
 class Map(object):
@@ -13,6 +13,12 @@ class Map(object):
         - Read points from csv  
         - Print points to csv  
         - Output map image
+    
+    Uses inverted y-axis convention for easier plotting:  
+        [[ x1y4, None, None],
+         [ None, x2y3, None],
+         [ None, None, None],
+         [ None, None, x3y1]]
     """
     def __init__(self, rawData):
         """
@@ -63,8 +69,28 @@ class Map(object):
     def show(self):
         for pt in self.RawData:
             print(f"[{pt.X}, {pt.Y}] {pt.Value}")
+    
+    def getEmptyMap(self, filler=None):
+        """
+        From known points in rawData, returns a matrix that fits to size all points  
 
-    def idw(self):
+        Can specify a filler that takes the place of point values. Default is None.  
+            
+            TODO optional sizing
+        """
+        m = []
+        for y in range(self.yMin, self.yMax + 1):
+            r = []
+            for x in range(self.xMin, self.xMax + 1):
+                r.append(filler)
+            m.append(r)
+
+        for pt in self.RawData:
+            m[self.yMax - pt.Y][pt.X - self.xMin] = pt.Value
+        
+        return m
+                
+    def idw(self, filler=None):
         """
         Performs Inverse Distance Weighted Interpolation
             Saves a .csv map to file
@@ -74,11 +100,31 @@ class Map(object):
             TODO Make cache for different interpolation schemes later
         """
         # create matrix of proper size
+        m = self.getEmptyMap(filler=filler)
 
         # populate matrix by iterating through known Points self.RawData
+        for y in range(len(m)):
+            for x in range(len(m[0])):
+                if m[y][x] == filler:
+                    # perform idw
+                    for pt in self.RawData:
 
+        
         # ouput to file
 
         # show plot of interpolated values
 
         pass
+
+
+
+p1 = Point(1, 1, 10)
+p2 = Point(1, 5, 20)
+p3 = Point(4, 4, 30)
+
+M = Map([p1, p2, p3])
+
+for r in M.getEmptyMap():
+    print(r)
+
+M.idw()

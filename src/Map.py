@@ -3,8 +3,10 @@ Map is primary data struct of topography
 Stores known points, and allows for performing various interpolation schemes on the raw data.  
 """
 
+from matplotlib import pyplot as plt
+
 from Point import Point
-# from .interpolate import *
+from interpolate import *
 
 class Map(object):
     """
@@ -70,25 +72,33 @@ class Map(object):
         for pt in self.RawData:
             print(f"[{pt.X}, {pt.Y}] {pt.Value}")
     
-    def getEmptyMap(self, filler=None):
+    def getEmptyPoints(self, filler=None):
         """
-        From known points in rawData, returns a matrix that fits to size all points  
+        From known points in rawData, returns a list of all points in area with gaps filled in by 'filler'  
 
-        Can specify a filler that takes the place of point values. Default is None.  
+        Can specify 'filler'. Default is None.  
             
             TODO optional sizing
         """
-        m = []
-        for y in range(self.yMin, self.yMax + 1):
-            r = []
-            for x in range(self.xMin, self.xMax + 1):
-                r.append(filler)
-            m.append(r)
-
-        for pt in self.RawData:
-            m[self.yMax - pt.Y][pt.X - self.xMin] = pt.Value
+        def isFilledAt(x, y, filler):
+            for pt in self.RawData:
+                if pt.X == x and pt.Y == y:
+                    if pt.Value != filler:
+                        return (True, pt)
+            return (False, None)
         
-        return m
+        pts = []
+        for y in range(self.yMin, self.yMax + 1):
+            for x in range(self.xMin, self.xMax + 1):
+                # check if point in rawData
+                filled = isFilledAt(x, y, filler)
+                if filled[0]:
+                    # make new pt
+                    pts.append(filled[1])
+                else:
+                    pts.append(Point(x, y, filler))
+        
+        return pts
                 
     def idw(self, filler=None):
         """
@@ -99,32 +109,43 @@ class Map(object):
             TODO Deal with user-input map sizes later
             TODO Make cache for different interpolation schemes later
         """
-        # create matrix of proper size
-        m = self.getEmptyMap(filler=filler)
+        # get total list of points of interest
+        pts = self.getEmptyPoints(filler=filler)
 
-        # populate matrix by iterating through known Points self.RawData
-        for y in range(len(m)):
-            for x in range(len(m[0])):
-                if m[y][x] == filler:
-                    # perform idw
-                    for pt in self.RawData:
-
+        # interpolate the points by idw
+        for pt in pts:
+            if pt.Value == filler:
+                pt.Value = 0
+                for raw in self.RawData:
+                    pt.Value += raw.Value * inverse_weight(pt, raw)
         
+        # populate matrix by iterating through known Points self.RawData
+        m = []
+        for y in range(self.yMin, self.yMax + 1):
+            r = []
+            for x in range(self.xMin, self.xMax + 1):
+                for pt in pts:
+                    if pt.X == x and pt.Y == y:
+                        r.append(pt.Value)
+                    else:
+                        continue
+            m.append(r)
+
+        print(m)
+
+        plt.imshow(m)
+        plt.show()
+
         # ouput to file
 
         # show plot of interpolated values
 
-        pass
 
 
-
-p1 = Point(1, 1, 10)
-p2 = Point(1, 5, 20)
-p3 = Point(4, 4, 30)
+p1 = Point(1, 1, 100)
+p2 = Point(1, 20, 200)
+p3 = Point(10, 10, 300)
 
 M = Map([p1, p2, p3])
-
-for r in M.getEmptyMap():
-    print(r)
 
 M.idw()

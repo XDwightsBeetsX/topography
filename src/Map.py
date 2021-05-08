@@ -99,8 +99,28 @@ class Map(object):
                     pts.append(Point(x, y, filler))
         
         return pts
-                
-    def idw(self, filler=None):
+
+    def writeToCsv(self, pts, filename):
+        # put pts in matrix
+        for pt in pts:
+            print(pt.getString())
+        m = []
+        for y in range(self.yMin, self.yMax + 1):
+            r = []
+            for x in range(self.xMin, self.xMax + 1):
+                for pt in pts:
+                    r.append(pt.Value)
+            print(r)
+            m.append(r)
+        
+        # write matrix to csv
+        with open(filename + ".csv", "w") as f:
+            for row in m:
+                for val in row:
+                    f.write(str(val) + ",")
+                f.write('\n')
+
+    def idw(self, filename="idw", filler=None):
         """
         Performs Inverse Distance Weighted Interpolation
             Saves a .csv map to file
@@ -119,33 +139,16 @@ class Map(object):
                 for raw in self.RawData:
                     pt.Value += raw.Value * inverse_weight(pt, raw)
         
-        # populate matrix by iterating through known Points self.RawData
-        m = []
-        for y in range(self.yMin, self.yMax + 1):
-            r = []
-            for x in range(self.xMin, self.xMax + 1):
-                for pt in pts:
-                    if pt.X == x and pt.Y == y:
-                        r.append(pt.Value)
-                    else:
-                        continue
-            m.append(r)
-
-        print(m)
-
-        plt.imshow(m)
-        plt.show()
-
         # ouput to file
+        self.writeToCsv(pts, filename)
 
         # show plot of interpolated values
 
 
-
-p1 = Point(1, 1, 100)
-p2 = Point(1, 20, 200)
-p3 = Point(10, 10, 300)
+p1 = Point(1, 1, 2)
+p2 = Point(3, 4, 5)
+p3 = Point(5, 2, 7)
 
 M = Map([p1, p2, p3])
 
-M.idw()
+M.idw(filename="trial")

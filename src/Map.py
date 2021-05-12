@@ -38,7 +38,7 @@ class Map(object):
                 self.xMin = x
             elif self.xMax < x:
                 self.xMax = x
-            elif y < self.yMin:
+            if y < self.yMin:
                 self.yMin = y
             elif self.yMax < y:
                 self.yMax = y
@@ -139,15 +139,40 @@ class Map(object):
                 for raw in self.RawData:
                     pt.Value += raw.Value * inverse_weight(pt, raw)
         
+<<<<<<< Updated upstream
+=======
+        # populate matrix by iterating through known Points self.RawData
+        m = []
+        for y in range(self.yMin, self.yMax + 1):
+            r = []
+            for x in range(self.xMin, self.xMax + 1):
+                for pt in pts:
+                    if pt.X == x and pt.Y == y:
+                        r.append(pt.Value)
+            m.append(r)
+
+        print(m)
+
+        plt.imshow(m)
+        plt.show()
+
+>>>>>>> Stashed changes
         # ouput to file
         self.writeToCsv(pts, filename)
 
         # show plot of interpolated values
 
 
+<<<<<<< Updated upstream
 p1 = Point(1, 1, 2)
 p2 = Point(3, 4, 5)
 p3 = Point(5, 2, 7)
+=======
+
+p1 = Point(1, 1, 100)
+p2 = Point(3, 20, 200)
+p3 = Point(10, 10, 300)
+>>>>>>> Stashed changes
 
 M = Map([p1, p2, p3])
 

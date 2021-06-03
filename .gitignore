@@ -1,16 +1,18 @@
 # ========================= #
 # ======== Dev Envs ======= #
 # ========================= #
-.git
-.github
-.idea
-__pycache__
-.vscode
-.vs
+idea/
+__pycache__/
+*.env
+*.venv
 
 # ========================= #
 # ========== Pkg ========== #
 # ========================= #
-.egg
-.wheel
-.distro
+*.egg
+*.egg-info
+wheel/
+wheels/
+distro/
+build/
+dist/

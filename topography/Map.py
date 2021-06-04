@@ -101,28 +101,6 @@ class Map(object):
                         r.append(pt.Value)
             m.append(r)
         return m
-
-    def readFromCsv(self, filename):
-        """
-        Reads points in from csv in the form:  
-            x, y, z(value)
-        """
-        try:
-            with open(filename, 'r+') as f:
-                points = []
-                for line in f.readlines():
-                    l = line.split(',')
-                    
-                    # TODO read in as double/floats?
-                    x = int(l[0])
-                    y = int(l[1])
-                    val = float(l[2])
-                    
-                    p = Point(x, y, val)
-                    points.append(p)
-                self.RawData = points
-        except Exception:
-            print(f"[MAP]-[readFromCsv]-[ERROR]-could not read points from file '{filename}'")  
     
     def writeToCsv(self, pts, filename, writeAsMatrix=False):
         """
@@ -216,3 +194,25 @@ class Map(object):
             plt.colorbar()
             plt.show()
 
+
+def getDataFromCsv(filename):
+    """
+    Reads points in from csv in the form:  
+        x, y, z(value)
+    """
+    try:
+        with open(filename, 'r+') as f:
+            points = []
+            for line in f.readlines():
+                l = line.split(',')
+                
+                # TODO read in as double/floats?
+                x = int(l[0])
+                y = int(l[1])
+                val = float(l[2])
+                
+                p = Point(x, y, val)
+                points.append(p)
+            return points
+    except Exception:
+        print(f"[MAP]-[readFromCsv]-[ERROR]-could not read points from file '{filename}'")

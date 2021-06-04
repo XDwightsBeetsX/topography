@@ -1,21 +1,13 @@
 
-
-from src.Map import Map
+from topography.Map import Map, getDataFromCsv
 
 if __name__ == "__main__":
     # take in csv/xlsx
+    data = getDataFromCsv("test.csv")
 
-    # clean input, what is 'null' value? '0', '',...
-
-    # select interpolation
-
-    # interpolate and modify map
-
-    # return/present new map
-
-
-    # test
-    
-    M = Map()
-    M.readFromCsv("test.csv")
+    # malke map
+    M = Map(data)
     M.show()
+
+    # interpolate
+    M.idw()

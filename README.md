@@ -2,13 +2,14 @@
 
 ![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)
 [![Build Status](https://travis-ci.com/XDwightsBeetsX/topography.svg?branch=master)](https://travis-ci.com/XDwightsBeetsX/topography)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/XDwightsBeetsX/topography.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/XDwightsBeetsX/topography/context:python)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/XDwightsBeetsX/topography.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/XDwightsBeetsX/topography/alerts/)
 
 Contains different approaches to modeling terrain and maps in python
 
 ## ***[Requirements](requirements.txt)***
 
-- `numpy`
-- `matplotlib`
+***numpy, matplotlib***
 
 ## ***Usage***
 

@@ -67,8 +67,9 @@ class Map(object):
         Prints Points in `self.PointsFilled`
         """
         for row in self.LastMatrix:
-            for pt in row:
-                print(f"[{pt.X}, {pt.Y}] {pt.Z}")
+            for val in row:
+                print(f"{val}", end=",")
+            print()
     
     def writeFilledPointValuesToCsv(self, filename, writeAsMatrix=False):
         """

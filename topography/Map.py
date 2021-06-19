@@ -6,8 +6,8 @@ Stores known points, and allows for performing various interpolation schemes on 
 
 from .Points import Point, PointValue
 from .interpolate import inverse_weight
-from .plotting import heatmap
-from .glob import *
+from .utils.plotting import heatmap
+from .utils.glob import *
 
 
 class Map(object):
@@ -118,9 +118,6 @@ class Map(object):
         """
         matrix = self.getEmptyMatrixFromRawPoints()
 
-        for row in matrix:
-            print(row)
-
         # interpolate the points by idw
         height = len(matrix)
         width = len(matrix[0])
@@ -131,8 +128,8 @@ class Map(object):
                     interpolatedValue = 0
                     for rawPt in self.RawPoints:
                         interpolatedValue += rawPt.Z * inverse_weight(newPt, rawPt)
-                    matrix[row][col] = interpolatedValue
-              
+                    matrix[row][col] = interpolatedValue / len(self.RawPoints)
+        
         # save to cache dict
         self.LastMatrix = matrix
         self.Cache[IDW] = matrix

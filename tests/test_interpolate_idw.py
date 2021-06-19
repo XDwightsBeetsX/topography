@@ -1,88 +1,152 @@
 """
-Weight Function Testing
+idw function tests
+
+NOTE these implement np.exp() to check the weights
+so the equation used must be implemented in testing
 """
 
 from topography.Points import Point, PointValue
 from topography.interpolate import inverse_weight
+from .msgs import running, passed, failed
 
 import numpy as np
+from matplotlib import pyplot as plt
 
 
-def test_1d_easy():
-    """
-    Tests of weighting in only x
-    """
-    print("\n[TESTS] - running - test_1d_easy")
-    correct = True
-    y = 0  # points are in 1D, just use y=0
-    
-    known1 = Point(10, y)
-    known2 = Point(known1.X, y)
+def w(x, xi, p):
+    return 1/abs(x - xi)**p
 
-    wExpected0 = 1
-    wTest0 = inverse_weight(known1, known2, onlyX=True)
-    if wTest0 != wExpected0:
+
+class Test_Interpolate_Idw:
+    # points in 2D just use y=0
+    Y = 0
+
+    def test(self):
+        xs = [1, 2, 3, 4]
+        zs = [2, 4, 4, 2]
+        rawPts = []
+        rawPts.append(PointValue(xs[0], self.Y, zs[0]))
+        rawPts.append(PointValue(xs[1], self.Y, zs[1]))
+        rawPts.append(PointValue(xs[2], self.Y, zs[2]))
+        rawPts.append(PointValue(xs[3], self.Y, zs[3]))
+
+        newXs = np.linspace(0, 5, 50)
+        newPts = []
+        for x in newXs:
+            if x not in xs:
+                p = 2
+                val = 0
+                totD = 0
+                for rPt in rawPts:
+                    wt = w(x, rPt.X, p)
+                    val += rPt.Z * wt
+                    totD += wt
+                newPts.append(PointValue(x, self.Y, val/totD))
+        
+        newZs = [pt.Z for pt in newPts]
+        plt.plot(newXs, newZs)
+        plt.show()
+
+
+class Test_Interpolate_Idw_Calculation:
+    # points in 2D just use y=0
+    Y = 0
+
+    def test_1_overlapping(self):
+        testName = "test_1_overlapping"
+        running(testName)
         correct = False
-    
-    known3 = Point(known1.X-1, y)
-    wExpected1 = np.exp(-1)
-    wTest1 = inverse_weight(known1, known3, onlyX=True)
-    if wTest1 != wExpected1:
+        
+        X = 10
+        known1 = Point(X, self.Y)
+        known2 = Point(X, self.Y)
+
+        wExp = 1
+        wTest = inverse_weight(known1, known2, onlyX=True)
+        if wTest == wExp:
+            correct = True
+        
+        if correct: passed(testName)
+        else: failed(testName)
+        assert correct
+
+    def test_2_unitDistance(self):
+        testName = "test_2_unitDistance"
+        running(testName)
         correct = False
-    
-    if correct: print("[TESTS] - passed  - test_1d_easy")
-    else: print("[TESTS] - failed  - test_1d_easy")
-    assert correct
+        
+        X = 10
+        known1 = Point(X, self.Y)
+        known2 = Point(X + 1, self.Y)
 
+        wExp = np.exp(-1)
+        wTest = inverse_weight(known1, known2, onlyX=True)
+        if wTest == wExp:
+            correct = True
+        
+        if correct: passed(testName)
+        else: failed(testName)
+        assert correct
 
-def test_1d_symmetry():
-    """
-    Tests weighting in only x about symmetrical point
-    """
-    print("\n[TESTS] - running - test_1d_symmetry")
-    correct = True
-    y = 0  # points are in 1D
-
-    known = Point(5, y)
-    
-    kx = known.X/4
-    testSym1 = Point(known.X - kx, y)
-    testSym2 = Point(known.X + kx, y)
-    if inverse_weight(known, testSym1, onlyX=True) != inverse_weight(known, testSym2, onlyX=True):
+    def test_3_symmetric(self):
+        testName = "test_3_symmetric"
+        running(testName)
         correct = False
-    
-    if correct: print("[TESTS] - passed  - test_1d_symmetry")
-    else: print("[TESTS] - failed  - test_1d_symmetry")
-    assert correct
+        
+        X = 10
+        d = 3
+        known = Point(X, self.Y)
+        knownL = Point(X - d, self.Y)
+        knownR = Point(X + d, self.Y)
 
-def test_1d_hard():
-    """
-    Tests weighting in only x at different distances
-    """
-    print("\n[TESTS] - running - test_1d_hard")
-    correct = True
-    y = 0
+        wExp = np.exp(-d)
+        wTestL = inverse_weight(known, knownL, onlyX=True)
+        wTestR = inverse_weight(known, knownR, onlyX=True)
 
-    # Spaced 1 apart
-    k1x, k2x = 4, 5
-    known1 = Point(k1x, y)
-    known2 = Point(k2x, y)
+        if wTestL == wExp and wTestR == wExp:
+            correct = True
+        
+        if correct: passed(testName)
+        else: failed(testName)
+        assert correct
 
-    wExpected1 = np.exp(-abs(k1x-k2x))
-    wTest1 = inverse_weight(known1, known2, onlyX=True)
-    if wTest1 != wExpected1:
+    def test_4_far(self):
+        testName = "test_4_far"
+        running(testName)
         correct = False
-    
-    # Spaced 3 apart with values 0, 5
-    c1x, c2x = 2, 5
-    known3 = Point(c1x, y)
-    known4 = Point(c2x, y)
-    
-    wExpected2 = np.exp(-abs(c1x-c2x))
-    wTest2 = inverse_weight(known3, known4, onlyX=True)
-    if wTest2 != wExpected2:
+        
+        X = 10
+        d = 10E5
+        known1 = Point(X, self.Y)
+        known2 = Point(X + d, self.Y)
+
+        wExp = np.exp(-d)
+        wTest = inverse_weight(known1, known2, onlyX=True)
+
+        if wTest == wExp:
+            correct = True
+        
+        if correct: passed(testName)
+        else: failed(testName)
+        assert correct
+
+    def test_5_2d(self):
+        testName = "test_5_2d"
+        running(testName)
         correct = False
-    
-    if correct: print("[TESTS] - passed  - test_1d_hard")
-    else: print("[TESTS] - failed  - test_1d_hard")
-    assert correct
+        
+        x = 3
+        y = 4
+        d = 5
+        known1 = Point(0, 0)
+        known2 = Point(x, y)
+
+        wExp = np.exp(-d)
+        wTest = inverse_weight(known1, known2)
+
+        if wTest == wExp:
+            correct = True
+        
+        if correct: passed(testName)
+        else: failed(testName)
+        assert correct

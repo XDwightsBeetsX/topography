@@ -5,33 +5,43 @@
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/XDwightsBeetsX/topography.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/XDwightsBeetsX/topography/context:python)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/XDwightsBeetsX/topography.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/XDwightsBeetsX/topography/alerts/)
 
-Contains different approaches to modeling terrain and maps in python
+Contains different approaches to modeling terrain and topographic-style maps in python
 
-## ***[Requirements](requirements.txt)***
+## ***Requirements***
 
-***numpy, matplotlib***
+- `numpy`
+- `matplotlib`
+
+*see the [requirements.txt](requirements.txt)*
 
 ## ***Usage***
 
-### **Install**
+### ***Install***
 
 ```shell
 pip install topography
 ```
 
-### **Implementation**
+### ***Implementation***
 
 ```python
-# read in data from csv file in form X, Y, Z
-data = Map.readFromCsv("filename.csv")
+from topography.Map import Map
+from topography.utils.io import getPointValuesFromCsv
 
-M = Map(data)
+# read in data
+rawDataPts = getPointValuesFromCsv("measurements.csv")
 
-# show plot and ouputs interpolated values to file
-M.idw(filename="map_output_idw", showWhenDone=True)
+# create a Map object
+M = Map(rawDataPts)
+
+# perform interpolation
+M.idw(showWhenDone=True)
+
+# save to file
+M.writeFilledPointValuesToCsv(self, "idw_results", writeAsMatrix=True)
 ```
 
-### **Development**
+## ***Development with `twine`***
 
 ```shell
 python setup.py sdist bdist_wheel
@@ -40,20 +50,29 @@ twine upload -r pypi dist/* -u <username> -p <password>
 
 ## ***Features***
 
-### **[Inverse Distance Weighting (IDW)](https://pro.arcgis.com/en/pro-app/latest/help/analysis/geostatistical-analyst/how-inverse-distance-weighted-interpolation-works.htm)**
+### **Inverse Distance Weighting (IDW)**
 
 A given point `P(x, y)` is determined by the values of its neighbors, inversely to the distance of each neighbor.  
 
-This ensures a `P` is more dependent on nearer points.  
+This ensures `P` is more dependent on nearer points.  
 
-- Weighting function `W(x, y)` of the form `exp(-d(x, y))`
+- Weighting function `w(x, y)` of the form `exp(-d(x, y))`
 
-### **[Nearest Neighbor (NN) *[in progress]*](https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-statistics/h-how-average-nearest-neighbor-distance-spatial-st.htm)**
+### **Nearest Neighbor (NN) *[in progress]***
 
-`P(x, y)` is determined only by the value of its nearest neighbor.  
+`P(x, y)` is determined only by the value of its nearest neighbor.
 
-### **[Spline *[in progress]*](https://pro.arcgis.com/en/pro-app/latest/tool-reference/3d-analyst/how-spline-works.htm)**
+In the case of an exact tie, ***TODO***
 
-A 2D-spline is fit to known points, where unknown points `P(x, y)` can be determined.  
+### **Spline *[in progress]***
 
-*credit to [`arcGIS`](https://www.arcgis.com/index.html)*
+A 2D-spline is fit to known points, where unknown points `P(x, y)` can be determined by their intersection with the fitted surface.
+
+### Reference
+
+- *credit to [`arcGIS`](https://www.arcgis.com/index.html)*
+  - *[Inverse Distance Weighting (IDW)](https://pro.arcgis.com/en/pro-app/latest/help/analysis/geostatistical-analyst/how-inverse-distance-weighted-interpolation-works.htm)*
+
+  - *[Nearest Neighbor (NN)](https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-statistics/h-how-average-nearest-neighbor-distance-spatial-st.htm)*
+
+  - *[Spline *[in progress]*](https://pro.arcgis.com/en/pro-app/latest/tool-reference/3d-analyst/how-spline-works.htm)*

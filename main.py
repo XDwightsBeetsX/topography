@@ -1,13 +1,21 @@
+"""
+Example driver program
+"""
 
-from topography.Map import Map, getDataFromCsv
+from topography.Map import Map
+from topography.io import getPointsFromCsv
+
 
 if __name__ == "__main__":
     # take in csv/xlsx
-    data = getDataFromCsv("test.csv")
+    rawData = getPointsFromCsv("tests/test_data/test_2d_basic.csv")
 
-    # malke map
-    M = Map(data)
-    M.show()
+    # make map from rawData
+    M = Map(rawData)
+    M.showRawPointValues()
 
     # interpolate
-    M.idw()
+    M.idw(showWhenDone=True)
+
+    # check out data after interpolating
+    M.showFilledPointValues()

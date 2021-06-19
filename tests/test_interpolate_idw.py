@@ -2,8 +2,8 @@
 Weight Function Testing
 """
 
-from src.Point import Point
-from src.interpolate import inverse_weight
+from topography.Point import Point
+from topography.interpolate import inverse_weight
 
 import numpy as np
 

@@ -124,13 +124,16 @@ class Map(object):
         for row in range(height):
             for col in range(width):
                 if matrix[row][col] == EMPTY:
-                    newPt = Point(row, col)
-                    interpolatedValue = 0
+                    newPt = PointValue(row, col, 0)
+                    totWeight = 0
                     for rawPt in self.RawPoints:
-                        interpolatedValue += rawPt.Z * inverse_weight(newPt, rawPt)
-                    matrix[row][col] = interpolatedValue / len(self.RawPoints)
+                        wt = inverse_weight(newPt, rawPt)
+                        newPt.Z += rawPt.Z * wt
+                        totWeight += wt
+                    newPt.Z /= totWeight
+                    matrix[row][col] = newPt.Z
         
-        # save to cache dict
+        # save to cache
         self.LastMatrix = matrix
         self.Cache[IDW] = matrix
 

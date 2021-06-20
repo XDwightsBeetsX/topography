@@ -41,13 +41,6 @@ M.idw(showWhenDone=True)
 M.writeFilledPointValuesToCsv(self, "idw_results", writeAsMatrix=True)
 ```
 
-## ***Development with `twine`***
-
-```shell
-python setup.py sdist bdist_wheel
-twine upload -r pypi dist/* -u <username> -p <password>
-```
-
 ## ***Features***
 
 ### **Inverse Distance Weighting (IDW)**
@@ -68,11 +61,18 @@ In the case of an exact tie, ***TODO***
 
 A 2D-spline is fit to known points, where unknown points `P(x, y)` can be determined by their intersection with the fitted surface.
 
+## ***Development with `twine`***
+
+```shell
+python setup.py sdist bdist_wheel
+twine upload -r pypi dist/* -u <username> -p <password>
+```
+
 ### Reference
 
-- *credit to [`arcGIS`](https://www.arcgis.com/index.html)*
+- *credit to [arcGIS](https://www.arcgis.com/index.html)*
   - *[Inverse Distance Weighting (IDW)](https://pro.arcgis.com/en/pro-app/latest/help/analysis/geostatistical-analyst/how-inverse-distance-weighted-interpolation-works.htm)*
 
   - *[Nearest Neighbor (NN)](https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-statistics/h-how-average-nearest-neighbor-distance-spatial-st.htm)*
 
-  - *[Spline *[in progress]*](https://pro.arcgis.com/en/pro-app/latest/tool-reference/3d-analyst/how-spline-works.htm)*
+  - *[Spline](https://pro.arcgis.com/en/pro-app/latest/tool-reference/3d-analyst/how-spline-works.htm)*

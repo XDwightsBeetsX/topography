@@ -32,6 +32,7 @@ def test_1_overlapping():
     else: failed(testName)
     assert correct
 
+
 def test_2_unitDistance():
     testName = "test_2_unitDistance"
     running(testName)
@@ -48,6 +49,7 @@ def test_2_unitDistance():
     if correct: passed(testName)
     else: failed(testName)
     assert correct
+
 
 def test_3_symmetric():
     testName = "test_3_symmetric"
@@ -70,6 +72,7 @@ def test_3_symmetric():
     else: failed(testName)
     assert correct
 
+
 def test_4_far():
     testName = "test_4_far"
     running(testName)
@@ -88,6 +91,7 @@ def test_4_far():
     if correct: passed(testName)
     else: failed(testName)
     assert correct
+
 
 def test_5_2d():
     testName = "test_5_2d"

@@ -7,7 +7,8 @@ Stores known points, and allows for performing various interpolation schemes on 
 from .Points import Point, PointValue
 from .interpolate import inverse_weight
 from .utils.plotting import heatmap
-from .utils.glob import *
+from .utils.glob import EMPTY
+from .utils.pile import getKeysAsList
 
 
 class Map(object):
@@ -24,7 +25,6 @@ class Map(object):
          [ None, None, x3y1]]
 
     TODO Deal with user-input map sizes  
-    TODO Make cache for different interpolation schemes  
     TODO Find resolution for fractional matrix sizes
     """
     def __init__(self, rawPoints):
@@ -32,7 +32,8 @@ class Map(object):
         `RawPoints` is the list of known Points
         """
         self.RawPoints = rawPoints
-        self.Cache = {}  # {'type': matrix}
+        self.FilledPoints = []
+        self.FilledMatrix = [[]]
         
         # get min/max points of rawData
         self.xMin, self.xMax = rawPoints[0].X, rawPoints[0].X
@@ -54,44 +55,43 @@ class Map(object):
         """
         self.RawPoints.append(newPointValue)
     
+    def clearLast(self):
+        self.FilledMatrix.clear()
+        self.FilledPoints.clear()
+    
     def showRawPointValues(self):
         """
         Prints Points in `self.RawPoints`
         """
         for pt in self.RawPoints:
-            print(f"[{pt.X}, {pt.Y}] {pt.Z}")
+            print(pt.getString())
     
     def showFilledPointValues(self):
         """
         Prints Points in `self.PointsFilled`
         """
-        for row in self.Cache[self.Cache.keys()[0]]:
-            for val in row:
-                print(f"{val}", end=",")
-            print()
+        for pt in self.FilledPoints:
+            print(pt.getString())
     
-    def writeFilledPointValuesToCsv(self, request, filename, writeAsMatrix=False):
+    def writeLastToCsv(self, filename, writeAsMatrix=False):
         """
         Writes series of PointValues in format:  
             x, y, z
         
         Can toggle `writeAsMatrix` to ouput in matrix format
         """
-        if request not in self.Cache.keys():
-            raise Exception(f"Request <{request}> not found in the Map cache")
         with open(filename + ".csv", "w") as f:
-            matrix = self.Cache[request]
+            matrix = self.FilledMatrix
             if writeAsMatrix:
                 for row in matrix:
                     for pt in row:
-                        f.write(pt.Z + ",")
+                        f.write(f"{pt},")
                     f.write('\n')
             else:
                 header = "x,y,z\n"
                 f.write(header)
-                for row in matrix:
-                    for pt in row:
-                        f.write(f"{str(pt.X)},{str(pt.Y)},{str(pt.Z)}\n")
+                for pt in self.FilledPoints:
+                    f.write(f"{str(pt.X)},{str(pt.Y)},{str(pt.Z)}\n")
         
     def getEmptyMatrixFromRawPoints(self):
         """
@@ -119,12 +119,11 @@ class Map(object):
         Can toggle `showWhenDone` to disable map output
         """
         matrix = self.getEmptyMatrixFromRawPoints()
+        pts = []
 
         # interpolate the points by idw
-        height = len(matrix)
-        width = len(matrix[0])
-        for row in range(height):
-            for col in range(width):
+        for row in range(len(matrix)):
+            for col in range(len(matrix[0])):
                 if matrix[row][col] == EMPTY:
                     newPt = PointValue(row, col, 0)
                     newWt = 0
@@ -136,9 +135,11 @@ class Map(object):
                     newWt /= totWeight
                     newPt.Z = newWt
                     matrix[row][col] = newWt
+                    pts.append(newPt)
         
         # save to cache
-        self.Cache[IDW] = matrix
+        self.FilledPoints = pts
+        self.FilledMatrix = matrix
 
         # show plot of interpolated values
         if showWhenDone:

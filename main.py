@@ -12,7 +12,10 @@ if __name__ == "__main__":
 
     # make map from rawData
     M = Map(rawData)
-    # M.showRawPointValues()
+    M.showRawPointValues()
 
     # interpolate
     M.idw(showWhenDone=True)
+    M.showFilledPointValues()
+
+    M.writeLastToCsv("idw_20x20", writeAsMatrix=True)

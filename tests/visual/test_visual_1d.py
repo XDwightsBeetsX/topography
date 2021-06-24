@@ -44,9 +44,9 @@ def test_1d_comparison():
     """
     Comparisons of power P across a set of points from Shepard's method
     """
-    p1 = 1
-    p2 = 2
-    p3 = 3
+    p1 = 1/2
+    p2 = 1
+    p3 = 2
     p4 = 5
 
     Y = 0

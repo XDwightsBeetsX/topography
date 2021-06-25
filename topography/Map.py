@@ -1,21 +1,20 @@
 """
 Map is primary data struct of topography
 
-Stores known points, and allows for performing various interpolation schemes on the raw data.  
+Stores known PointValues, and allows for performing various interpolation schemes on the raw data.  
 """
 
-from .Points import Point, PointValue
+from .Points import PointValue
 from .interpolate import inverse_weight
-from .utils.glob import EMPTY
 
 from matplotlib import pyplot as plt
 
 
 class Map(object):
     """
-    initialize with list of known Points
-        - Read points from csv  
-        - Print points to csv  
+    initialize with list of known PointValues
+        - Read PointValues from csv  
+        - Print PointValues to csv  
         - Output map image
     
     Uses inverted y-axis convention for easier plotting:  
@@ -24,60 +23,102 @@ class Map(object):
          [ None, None, None],
          [ None, None, x3y1]]
     """
-    def __init__(self, rawPoints):
+    def __init__(self, rawPointValues, xRange=None, yRange=None):
         """
-        `RawPoints` is the list of known Points
+        `RawPointValues` is the list of known PointValues
         """
-        self.RawPoints = rawPoints
+        def getXYRange(pointValues):
+            """
+            Gets the xRange and yRange in tuples for a set of input PointValues
+            """
+            xMin, xMax = pointValues[0].X, pointValues[0].X
+            yMin, yMax = pointValues[0].Y, pointValues[0].Y
+            for pt in pointValues:
+                x, y = pt.X, pt.Y
+                if x < xMin:
+                    xMin = x
+                elif xMax < x:
+                    xMax = x
+                if y < yMin:
+                    yMin = y
+                elif yMax < y:
+                    yMax = y
+            return (xMin, xMax), (yMin, yMax)
         
+        self.RawPointValues = rawPointValues
         self.FilledX = []
         self.FilledY = []
         self.FilledZ = []
-        self.FilledPoints = []
-        self.FilledMatrix = [[]]
-        
-        # get min/max points of rawData
-        self.xMin, self.xMax = rawPoints[0].X, rawPoints[0].X
-        self.yMin, self.yMax = rawPoints[0].Y, rawPoints[0].Y
-        for pt in rawPoints:
-            x, y = pt.X, pt.Y
-            if x < self.xMin:
-                self.xMin = x
-            elif self.xMax < x:
-                self.xMax = x
-            if y < self.yMin:
-                self.yMin = y
-            elif self.yMax < y:
-                self.yMax = y
+        self.FilledPointValues = []
+
+        # Set x and y ranges
+        hasXr = xRange != None
+        hasYr = yRange != None
+        if hasXr and hasYr:
+            self.XRange = xRange
+            self.YRange = yRange
+        else:
+            if hasXr:
+                self.XRange = xRange
+                self.YRange = getXYRange(rawPointValues)[1]
+            elif hasYr:
+                self.XRange = self.YRange = getXYRange(rawPointValues)[0]
+                self.YRange = yRange
+            else:
+                xR, yR = getXYRange(rawPointValues)
+                self.XRange = xR
+                self.YRange = yR
     
     def addPointValue(self, newPointValue):
         """
-        Directly adds a PointValue to `self.RawPoints`
+        Directly adds a PointValue to `self.RawPointValues`
         """
-        self.RawPoints.append(newPointValue)
+        self.RawPointValues.append(newPointValue)
     
     def clearLast(self):
         """
-        Clears the last filled matrix and points list.
+        Clears the last filled matrix and PointValues list.
         """
         self.FilledX.clear()
         self.FilledY.clear()
         self.FilledZ.clear()
-        self.FilledMatrix.clear()
-        self.FilledPoints.clear()
+        self.FilledPointValues.clear()
     
+    def getFilledPointValue(self, x, y):
+        """
+        Attempts to find a PointValue in FilledPointValues
+
+        Throws Exception if not found
+        """
+        for pt in self.FilledPointValues:
+            if pt.X == x and pt.Y == y:
+                return pt
+        raise Exception(f"PointValue not found at [{x}, {y}]")
+
+    def getAsMatrix(self):
+        """
+        Returns a 2-D matrix of FilledPointValues Z-values
+        """
+        matrix = []
+        for y in range(self.YRange[0], self.YRange[1]):
+            row = []
+            for x in range(self.XRange[0], self.XRange[1]):
+                row.append(self.getFilledPointValue(x, y).Z)
+            matrix.append(row)
+        return matrix
+
     def showRawPointValues(self):
         """
-        Prints Points in `self.RawPoints`
+        Prints PointValues in `self.RawPointValues`
         """
-        for pt in self.RawPoints:
+        for pt in self.RawPointValues:
             print(pt.getString())
     
     def showFilledPointValues(self):
         """
-        Prints Points in `self.PointsFilled`
+        Prints PointValues in `self.PointValuesFilled`
         """
-        for pt in self.FilledPoints:
+        for pt in self.FilledPointValues:
             print(pt.getString())
     
     def writeLastToCsv(self, filename, writeAsMatrix=False):
@@ -87,7 +128,7 @@ class Map(object):
         Can toggle `writeAsMatrix` to ouput in matrix format
         """
         with open(filename + ".csv", "w") as f:
-            matrix = self.FilledMatrix
+            matrix = self.getAsMatrix()
             if writeAsMatrix:
                 for row in matrix:
                     for pt in row:
@@ -96,7 +137,7 @@ class Map(object):
             else:
                 header = "x,y,z\n"
                 f.write(header)
-                for pt in self.FilledPoints:
+                for pt in self.FilledPointValues:
                     f.write(f"{str(pt.X)},{str(pt.Y)},{str(pt.Z)}\n")
     
     def showPlot(self, title="Interpolated Topography"):
@@ -120,7 +161,8 @@ class Map(object):
         cmTerra = plt.get_cmap("terrain")
         
         axHeat = fig.add_subplot(1, 2, 1)
-        im = axHeat.imshow(self.FilledMatrix, origin="lower", cmap=cmHeat)
+        heatMatrix = self.getAsMatrix()
+        im = axHeat.imshow(heatMatrix, origin="lower", cmap=cmHeat)
         fig.colorbar(im, ax=[axHeat], location="right", fraction=frac, pad=pad)
 
         axSurf = fig.add_subplot(1, 2, 2, projection="3d")
@@ -128,65 +170,37 @@ class Map(object):
 
         plt.show()
 
-    def getEmptyMatrixFromRawPoints(self):
-        """
-        Makes a 2d matrix from RawPoints that has gaps filled with globals.EMPTY
-        """
-        width = self.xMax - self.xMin + 1
-        height = self.yMax - self.yMin + 1
-        
-        # init empty matrix
-        matrix = []
-        for _row in range(height):
-            row = [EMPTY] * width
-            matrix.append(row)
-        
-        # fill w known pts
-        for rawPt in self.RawPoints:
-            matrix[rawPt.Y][rawPt.X] = rawPt.Z
-        
-        return matrix
-
     def idw(self, showWhenDone=True):
         """
         Performs Inverse Distance Weighted interpolation.  
         Can toggle `showWhenDone` to disable map output.
         """
-        matrix = self.getEmptyMatrixFromRawPoints()
         pts = []
 
-        w = len(matrix)
-        h = len(matrix[0])
-        # interpolate the points by idw
-        for row in range(w):
-            for col in range(h):
-                if matrix[row][col] == EMPTY:
-                    newPt = PointValue(row, col, 0)
-                    newWt = 0
-                    totWeight = 0
-                    for rawPt in self.RawPoints:
-                        wt = inverse_weight(newPt, rawPt)
-                        newWt += rawPt.Z * wt
-                        totWeight += wt
-                    newWt /= totWeight
-                    newPt.Z = newWt
+        # interpolate the PointValues by idw
+        for y in range(self.YRange[0], self.YRange[1]):
+            for x in range(self.XRange[0], self.XRange[1]):
+                newPt = PointValue(x, y, 0)
+                newWt = 0
+                totWeight = 0
+                for rawPt in self.RawPointValues:
+                    wt = inverse_weight(newPt, rawPt)
+                    newWt += rawPt.Z * wt
+                    totWeight += wt
+                newWt /= totWeight
+                newPt.Z = newWt
 
-                    self.FilledX.append(row)
-                    self.FilledY.append(col)
-                    self.FilledZ.append(newWt)
-                    pts.append(newPt)
-                    matrix[row][col] = newWt
+                self.FilledX.append(x)
+                self.FilledY.append(y)
+                self.FilledZ.append(newWt)
+                pts.append(newPt)
         
         # save to cache
-        self.FilledPoints = pts
-        self.FilledMatrix = matrix
+        self.FilledPointValues = pts
 
         # show plot of interpolated values
         if showWhenDone:
-            self.showPlot(title=f"Inverse Distance Interpolation of {w-1}x{h-1} Map")
+            self.showPlot(title="Inverse Distance Map Interpolation")
 
     def nn(self, filename="nn"):
-        pass
-
-    def linear(self, filename="linear"):
         pass

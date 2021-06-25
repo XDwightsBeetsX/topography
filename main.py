@@ -3,19 +3,24 @@ Example driver program
 """
 
 from topography.Map import Map
-from topography.io import getPointsFromCsv
+from topography.utils.io import getPointValuesFromCsv
 
 
 if __name__ == "__main__":
     # take in csv/xlsx
-    rawData = getPointsFromCsv("tests/test_data/test_2d_basic.csv")
+    rawData = getPointValuesFromCsv("tests/data/20x20.csv")
 
     # make map from rawData
     M = Map(rawData)
-    M.showRawPointValues()
 
-    # interpolate
+    # Display the inputted raw data values
+    # M.showRawPointValues()
+
+    # interpolate using inverse distance weighting
     M.idw(showWhenDone=True)
 
-    # check out data after interpolating
-    M.showFilledPointValues()
+    # Display the interpolated data values
+    # M.showFilledPointValues()
+
+    # Save the data to a .csv file
+    # M.writeLastToCsv("idw_20x20", writeAsMatrix=True)

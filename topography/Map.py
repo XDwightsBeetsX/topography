@@ -6,8 +6,9 @@ Stores known points, and allows for performing various interpolation schemes on 
 
 from .Points import Point, PointValue
 from .interpolate import inverse_weight
-from .plotting import heatmap
-from .glob import *
+from .utils.glob import EMPTY
+
+from matplotlib import pyplot as plt
 
 
 class Map(object):
@@ -22,18 +23,18 @@ class Map(object):
          [ None, x2y3, None],
          [ None, None, None],
          [ None, None, x3y1]]
-
-    TODO Deal with user-input map sizes  
-    TODO Make cache for different interpolation schemes  
-    TODO Find resolution for fractional matrix sizes
     """
     def __init__(self, rawPoints):
         """
         `RawPoints` is the list of known Points
         """
         self.RawPoints = rawPoints
-        self.LastMatrix = [[]]
-        self.Cache = {}
+        
+        self.FilledX = []
+        self.FilledY = []
+        self.FilledZ = []
+        self.FilledPoints = []
+        self.FilledMatrix = [[]]
         
         # get min/max points of rawData
         self.xMin, self.xMax = rawPoints[0].X, rawPoints[0].X
@@ -55,42 +56,78 @@ class Map(object):
         """
         self.RawPoints.append(newPointValue)
     
+    def clearLast(self):
+        """
+        Clears the last filled matrix and points list.
+        """
+        self.FilledX.clear()
+        self.FilledY.clear()
+        self.FilledZ.clear()
+        self.FilledMatrix.clear()
+        self.FilledPoints.clear()
+    
     def showRawPointValues(self):
         """
         Prints Points in `self.RawPoints`
         """
         for pt in self.RawPoints:
-            print(f"[{pt.X}, {pt.Y}] {pt.Z}")
+            print(pt.getString())
     
     def showFilledPointValues(self):
         """
         Prints Points in `self.PointsFilled`
         """
-        for row in self.LastMatrix:
-            for val in row:
-                print(f"{val}", end=",")
-            print()
+        for pt in self.FilledPoints:
+            print(pt.getString())
     
-    def writeFilledPointValuesToCsv(self, filename, writeAsMatrix=False):
+    def writeLastToCsv(self, filename, writeAsMatrix=False):
         """
         Writes series of PointValues in format:  
-            x, y, z
-        
+            x, y, z  
         Can toggle `writeAsMatrix` to ouput in matrix format
         """
         with open(filename + ".csv", "w") as f:
+            matrix = self.FilledMatrix
             if writeAsMatrix:
-                for row in self.LastMatrix:
+                for row in matrix:
                     for pt in row:
-                        f.write(pt.Z + ",")
+                        f.write(f"{pt},")
                     f.write('\n')
             else:
                 header = "x,y,z\n"
                 f.write(header)
-                for row in self.LastMatrix:
-                    for pt in row:
-                        f.write(f"{str(pt.X)},{str(pt.Y)},{str(pt.Z)}\n")
+                for pt in self.FilledPoints:
+                    f.write(f"{str(pt.X)},{str(pt.Y)},{str(pt.Z)}\n")
+    
+    def showPlot(self, title="Interpolated Topography"):
+        """
+        Makes a heatmap and a surface plot of the last executed interpolation.  
+        Typically called after running an interpolation with `showWhenDone=True`.
+
+        For more colormaps, see https://matplotlib.org/stable/tutorials/colors/colormaps.html
+        """
+        # width, height of the figure
+        w, h = 10, 5
+
+        # These control colorbar scaling and work magically
+        frac, pad = 0.0458, 0.04
         
+        fig = plt.figure()
+        fig.set_size_inches(w, h)
+        fig.suptitle(title, fontsize=18)
+        
+        cmHeat = plt.get_cmap("viridis")
+        cmTerra = plt.get_cmap("terrain")
+        
+        axHeat = fig.add_subplot(1, 2, 1)
+        im = axHeat.imshow(self.FilledMatrix, origin="lower", cmap=cmHeat)
+        fig.colorbar(im, ax=[axHeat], location="right", fraction=frac, pad=pad)
+
+        axSurf = fig.add_subplot(1, 2, 2, projection="3d")
+        axSurf.plot_trisurf(self.FilledX, self.FilledY, self.FilledZ, cmap=cmTerra, linewidth=0)
+
+        plt.show()
+
     def getEmptyMatrixFromRawPoints(self):
         """
         Makes a 2d matrix from RawPoints that has gaps filled with globals.EMPTY
@@ -112,34 +149,41 @@ class Map(object):
 
     def idw(self, showWhenDone=True):
         """
-        Performs Inverse Distance Weighted interpolation
-
-        Can toggle `showWhenDone` to disable map output
+        Performs Inverse Distance Weighted interpolation.  
+        Can toggle `showWhenDone` to disable map output.
         """
         matrix = self.getEmptyMatrixFromRawPoints()
+        pts = []
 
-        for row in matrix:
-            print(row)
-
+        w = len(matrix)
+        h = len(matrix[0])
         # interpolate the points by idw
-        height = len(matrix)
-        width = len(matrix[0])
-        for row in range(height):
-            for col in range(width):
+        for row in range(w):
+            for col in range(h):
                 if matrix[row][col] == EMPTY:
-                    newPt = Point(row, col)
-                    interpolatedValue = 0
+                    newPt = PointValue(row, col, 0)
+                    newWt = 0
+                    totWeight = 0
                     for rawPt in self.RawPoints:
-                        interpolatedValue += rawPt.Z * inverse_weight(newPt, rawPt)
-                    matrix[row][col] = interpolatedValue
-              
-        # save to cache dict
-        self.LastMatrix = matrix
-        self.Cache[IDW] = matrix
+                        wt = inverse_weight(newPt, rawPt)
+                        newWt += rawPt.Z * wt
+                        totWeight += wt
+                    newWt /= totWeight
+                    newPt.Z = newWt
+
+                    self.FilledX.append(row)
+                    self.FilledY.append(col)
+                    self.FilledZ.append(newWt)
+                    pts.append(newPt)
+                    matrix[row][col] = newWt
+        
+        # save to cache
+        self.FilledPoints = pts
+        self.FilledMatrix = matrix
 
         # show plot of interpolated values
         if showWhenDone:
-            heatmap(matrix)
+            self.showPlot(title=f"Inverse Distance Interpolation of {w-1}x{h-1} Map")
 
     def nn(self, filename="nn"):
         pass

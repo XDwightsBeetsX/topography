@@ -12,10 +12,15 @@ if __name__ == "__main__":
 
     # make map from rawData
     M = Map(rawData)
-    M.showRawPointValues()
 
-    # interpolate
+    # Display the inputted raw data values
+    # M.showRawPointValues()
+
+    # interpolate using inverse distance weighting
     M.idw(showWhenDone=True)
-    M.showFilledPointValues()
 
-    M.writeLastToCsv("idw_20x20", writeAsMatrix=True)
+    # Display the interpolated data values
+    # M.showFilledPointValues()
+
+    # Save the data to a .csv file
+    # M.writeLastToCsv("idw_20x20", writeAsMatrix=True)

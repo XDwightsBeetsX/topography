@@ -106,17 +106,22 @@ class Map(object):
 
         For more colormaps, see https://matplotlib.org/stable/tutorials/colors/colormaps.html
         """
+        # width, height of the figure
         w, h = 10, 5
+
+        # These control colorbar scaling and work magically
+        frac, pad = 0.0458, 0.04
+        
         fig = plt.figure()
         fig.set_size_inches(w, h)
         fig.suptitle(title, fontsize=18)
-
+        
         cmHeat = plt.get_cmap("viridis")
         cmTerra = plt.get_cmap("terrain")
         
         axHeat = fig.add_subplot(1, 2, 1)
         im = axHeat.imshow(self.FilledMatrix, origin="lower", cmap=cmHeat)
-        fig.colorbar(im, ax=[axHeat], location="right", fraction=0.0458, pad=0.04)
+        fig.colorbar(im, ax=[axHeat], location="right", fraction=frac, pad=pad)
 
         axSurf = fig.add_subplot(1, 2, 2, projection="3d")
         axSurf.plot_trisurf(self.FilledX, self.FilledY, self.FilledZ, cmap=cmTerra, linewidth=0)

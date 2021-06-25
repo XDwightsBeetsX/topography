@@ -14,65 +14,60 @@ Contains different approaches to modeling terrain and topographic-style maps in 
 
 *see the [requirements.txt](requirements.txt)*
 
-## ***Usage***
-
-### ***Install***
+## ***Install***
 
 ```shell
 pip install topography
 ```
 
-### ***Implementation***
+## ***Features***
+
+### **[Inverse Distance Weighting (IDW)](/topography/docs/idw.md)**
+
+A given point `P(x, y)` is determined by the values of its neighbors, inversely to the distance of each neighbor.  
+
+`P` is more heavily influenced by nearer points via a weighting function `w(x, y)`.
+
+### **Nearest Neighbor (NN) *[in progress :construction_worker: :hammer_and_wrench:]***
+
+`P(x, y)` is determined only by the value of its nearest neighbor.
+
+This approach works better with a larger set of data points, or else the resulting map has little detail.
+
+In the case of an exact tie, ***TODO***
+
+### **Spline *[in progress :construction_worker: :hammer_and_wrench:]***
+
+## ***Example***
 
 ```python
 from topography.Map import Map
 from topography.utils.io import getPointValuesFromCsv
 
-# read in data
-rawDataPts = getPointValuesFromCsv("measurements.csv")
+# take in csv/xlsx
+rawData = getPointValuesFromCsv("tests/data/20x20.csv")
 
-# create a Map object
-M = Map(rawDataPts)
+# make map from rawData
+M = Map(rawData)
 
-# perform interpolation
+# Display the inputted raw data values
+M.showRawPointValues()
+
+# interpolate using inverse distance weighting
 M.idw(showWhenDone=True)
 
-# save to file
-M.writeFilledPointValuesToCsv(self, "idw_results", writeAsMatrix=True)
+# Display the interpolated data values
+M.showFilledPointValues()
+
+# Save the data to a .csv file
+M.writeLastToCsv("idw_20x20", writeAsMatrix=True)
 ```
 
-## ***Features***
-
-### **Inverse Distance Weighting (IDW)**
-
-A given point `P(x, y)` is determined by the values of its neighbors, inversely to the distance of each neighbor.  
-
-This ensures `P` is more dependent on nearer points.  
-
-- Weighting function `w(x, y)` of the form `exp(-d(x, y))`
-
-### **Nearest Neighbor (NN) *[in progress]***
-
-`P(x, y)` is determined only by the value of its nearest neighbor.
-
-In the case of an exact tie, ***TODO***
-
-### **Spline *[in progress]***
-
-A 2D-spline is fit to known points, where unknown points `P(x, y)` can be determined by their intersection with the fitted surface.
-
-## ***Development with `twine`***
+### ***Development with `twine`***
 
 ```shell
 python setup.py sdist bdist_wheel
 twine upload -r pypi dist/* -u <username> -p <password>
 ```
 
-### Reference
-
-- *credit to [arcGIS](https://www.arcgis.com/index.html)*
-  - *[Inverse Distance Weighting (IDW)](https://pro.arcgis.com/en/pro-app/latest/help/analysis/geostatistical-analyst/how-inverse-distance-weighted-interpolation-works.htm)*
-
-  - *[Nearest Neighbor (NN)](https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-statistics/h-how-average-nearest-neighbor-distance-spatial-st.htm)*
-
-  - *[Spline](https://pro.arcgis.com/en/pro-app/latest/tool-reference/3d-analyst/how-spline-works.htm)*
+> *credit to: [ArcGIS](https://www.arcgis.com/index.html)*

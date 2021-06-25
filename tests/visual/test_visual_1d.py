@@ -20,10 +20,10 @@ def test_1d_p2():
     n = 50
 
     rawPts = []
-    rawPts.append(PointValue(1, Y, 2))
-    rawPts.append(PointValue(2, Y, 4))
-    rawPts.append(PointValue(3, Y, 4))
-    rawPts.append(PointValue(4, Y, 2))
+    rawPts.append(PointValue(1, Y, 1))
+    rawPts.append(PointValue(2, Y, 2))
+    rawPts.append(PointValue(3, Y, 2))
+    rawPts.append(PointValue(4, Y, 1))
 
     newXs = np.linspace(rawPts[0].X - 1, rawPts[-1].X + 1, n)
     totPts = []
@@ -138,10 +138,10 @@ def test_1d_peak():
 def test_1d_comparison():
     title = "Comparisons of Power P Across a Set of Points From Shepard's Method"
     n = 50
-    p1 = 1/2
-    p2 = 1
-    p3 = 2
-    p4 = 5
+    p1 = -2
+    p2 = 1/2
+    p3 = 1
+    p4 = 2
 
     rawPts = []
     rawPts.append(PointValue(1, Y, 2))

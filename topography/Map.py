@@ -4,7 +4,7 @@ Map is primary data struct of topography
 Stores known PointValues, and allows for performing various interpolation schemes on the raw data.  
 """
 
-from .Points import Point, PointValue
+from .Points import PointValue
 from .interpolate import inverse_weight
 
 from matplotlib import pyplot as plt

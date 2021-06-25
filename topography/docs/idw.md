@@ -19,7 +19,7 @@ The weight sum with point density *rho* can be then approximated by,
 
 ![image](https://user-images.githubusercontent.com/55027279/123364632-6688e880-d53a-11eb-9175-6590cb7ab3bb.png)
 
-which diverges for *p <= 2* as *R* approaches infinity. This means that for weighting function power parameters *p <= 2*, interpolated values become dominated by far-away points. 
+which diverges for *p <= 2* as *R* approaches infinity. This means that for weighting function power parameters *p <= 2*, interpolated values become dominated by far-away points.
 
 ## Shepard's Method
 
@@ -42,6 +42,5 @@ Distant points may have little relevance on the value of an interpolated point. 
 Search neighborhoods are commonly defined in terms of maximum distance or a quota of proximal points.
 
 ![image](https://user-images.githubusercontent.com/55027279/123366786-70144f80-d53e-11eb-8230-a9f812994f16.png)
-
 
 > *credit to: [ArcGIS IDW](https://pro.arcgis.com/en/pro-app/latest/help/analysis/geostatistical-analyst/how-inverse-distance-weighted-interpolation-works.htm), [Wikipedia](https://en.wikipedia.org/wiki/Inverse_distance_weighting)*

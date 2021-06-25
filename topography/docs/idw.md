@@ -29,10 +29,19 @@ Shepard worked to minimize a measure of deviations between tuples of interpolati
 
 The power parameter *p* can be tailored to a data set based on understanding of the distribution of known points.
 
-### An example for *p = 2*,
+### An example for *p = 2*
 
 | Shepard's method| *topography* reproduction |
 | :-: | :-: |
 | ![image](https://user-images.githubusercontent.com/55027279/123361851-60443d80-d535-11eb-8761-a0017807b56a.png) | ![image](https://user-images.githubusercontent.com/55027279/123362265-05f7ac80-d536-11eb-888d-f3bc74cf73e0.png) |
+
+## Search Neighborhoods
+
+Distant points may have little relevance on the value of an interpolated point. To exclude these from consideration, a search neighborhood can be defined that will restrict weighting to nearby points.
+
+Search neighborhoods are commonly defined in terms of maximum distance or a quota of proximal points.
+
+![image](https://user-images.githubusercontent.com/55027279/123366786-70144f80-d53e-11eb-8230-a9f812994f16.png)
+
 
 > *credit to: [ArcGIS IDW](https://pro.arcgis.com/en/pro-app/latest/help/analysis/geostatistical-analyst/how-inverse-distance-weighted-interpolation-works.htm), [Wikipedia](https://en.wikipedia.org/wiki/Inverse_distance_weighting)*

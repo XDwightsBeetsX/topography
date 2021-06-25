@@ -7,6 +7,8 @@
 
 Contains different approaches to modeling terrain and topographic-style maps in python
 
+![image](https://user-images.githubusercontent.com/55027279/123488764-2b3bf780-d5d6-11eb-9c7e-3e9cd3020018.png)
+
 ## ***Requirements***
 
 - `numpy`
@@ -69,5 +71,3 @@ M.writeLastToCsv("idw_20x20", writeAsMatrix=True)
 python setup.py sdist bdist_wheel
 twine upload -r pypi dist/* -u <username> -p <password>
 ```
-
-> *credit to: [ArcGIS](https://www.arcgis.com/index.html)*

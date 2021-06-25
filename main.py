@@ -11,7 +11,7 @@ if __name__ == "__main__":
     rawData = getPointValuesFromCsv("tests/data/20x20.csv")
 
     # make map from rawData
-    M = Map(rawData)
+    M = Map(rawData, xRange=(0, 10))
 
     # Display the inputted raw data values
     # M.showRawPointValues()

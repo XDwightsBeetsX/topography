@@ -31,17 +31,18 @@ def inverse_weight(thisPt, rawPts, p=2, neighborhoodSize=None):
     totWt = 0
     ct = 0
     for distKey in distKeys:
-        for keyVal in distsAndVals[distKey]:
+        for val in distsAndVals[distKey]:
             if neighborhoodSize is not None:
                 if neighborhoodSize <= ct:
                     return totVal / totWt
             wt = 1
             if distKey != 0:
                 wt = 1 / (distKey**p)
-            totVal += wt * keyVal
+            totVal += wt * val
             totWt += wt
             ct += 1
     
+    print(f"{totVal} / {totWt} = {totVal / totWt}")
     return totVal / totWt
 
 def step(thisPt, rawPts, limit):

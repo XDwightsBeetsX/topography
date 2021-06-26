@@ -4,7 +4,7 @@ interpolate.euclidian_distance tests
 
 from topography.Points import Point
 from topography.interpolate import euclidian_distance
-from .msgs import running, passed, failed
+from ..msgs import running, passed, failed
 
 
 def test_1_overlapping():

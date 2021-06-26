@@ -13,13 +13,13 @@ if __name__ == "__main__":
     rawData = getPointValuesFromCsv("tests/data/20x20.csv")
     
     # make map from rawData
-    # M = Map(rawData)
+    M = Map(rawData)
 
     # make map from noise data
-    noiseMaker = Noise((0, 50), (0, 50))
-    noiseData = noiseMaker.getRandom(scaleFactor=1)
-    M = Map(noiseData)
-    
+    # noiseMaker = Noise((0, 50), (0, 50))
+    # noiseData = noiseMaker.getRandom(scaleFactor=1)
+    # M = Map(noiseData)
+
     # Display the inputted raw data values
     # M.showRawPointValues()
 

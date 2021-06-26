@@ -1,8 +1,5 @@
 """
-idw function tests
-
-NOTE these implement np.exp() to check the weights
-so the equation used must be implemented in testing
+inverse_weight function tests
 """
 
 from topography.Points import Point, PointValue
@@ -12,42 +9,50 @@ from .msgs import running, passed, failed
 from matplotlib import pyplot as plt
 
 
-# points in 2D just use y=0
-Y = 0
-
 def test_1_overlapping():
     testName = "test_1_overlapping"
     running(testName)
     correct = False
     
-    known1 = Point(0, 0)
-    known2 = Point(0, 0)
+    x = 3
+    y = 4
+    z = 1
+    
+    testPt = Point(x, y)
+    knownPt = PointValue(x, y, z)
 
-    wtExp = 1
-    wtTest = inverse_weight(known1, known2)
+    wtExp = z
+    wtTest = inverse_weight(testPt, [knownPt])
     if wtTest == wtExp:
         correct = True
     
     if correct: passed(testName)
-    else: failed(testName)
+    else: failed(testName, wtTest, wtExp)
     assert correct
 
 
-def test_2_unitDistance():
-    testName = "test_2_unitDistance"
+def test_2_distant():
+    testName = "test_2_distant"
     running(testName)
     correct = False
     
-    known1 = Point(0, 0)
-    known2 = Point(0, 1)
+    x = 3
+    y = 4
+    z = 1
+    far = 10E9
 
-    wtExp = 1
-    wtTest = inverse_weight(known1, known2)
-    if wtTest == wtExp:
+    testPt = Point(x, y)
+    knownPt = PointValue(x + far, y + far, z)
+
+    print(knownPt.getString())
+    
+    wtLim = 10E-6
+    wtTest = inverse_weight(testPt, [knownPt])
+    if wtTest < wtLim:
         correct = True
     
     if correct: passed(testName)
-    else: failed(testName)
+    else: failed(testName, wtTest, wtLim)
     assert correct
 
 
@@ -62,8 +67,8 @@ def test_3_symmetric():
     knownR = Point(0 + d, 0)
 
     wtExp = 1 / (d**2)
-    wtTestL = inverse_weight(known, knownL)
-    wtTestR = inverse_weight(known, knownR)
+    wtTestL = inverse_weight(known, [knownL])
+    wtTestR = inverse_weight(known, [knownR])
 
     if wtTestL == wtExp and wtTestR == wtExp:
         correct = True
@@ -83,7 +88,7 @@ def test_4_far():
     known2 = Point(0 + d, 0)
 
     wtExp = 1 / (d**2)
-    wtTest = inverse_weight(known1, known2)
+    wtTest = inverse_weight(known1, [known2])
 
     if wtTest == wtExp:
         correct = True
@@ -102,7 +107,7 @@ def test_5_2d():
     known2 = Point(3, 4)
 
     wtExp = 1 / (5**2)
-    wtTest = inverse_weight(known1, known2)
+    wtTest = inverse_weight(known1, [known2])
 
     if wtTest == wtExp:
         correct = True

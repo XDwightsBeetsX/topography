@@ -3,8 +3,10 @@ Various helper methods for topography
 """
 
 
-def getKeysAsList(dictionary):
+def euclidian_distance(ptA, ptB):
     """
-    Returns a List of dictionary keys
+    Returns the shortest path distance between the two Points
     """
-    return [k for k in dictionary.keys()]
+    if (ptA.X != ptB.X or ptA.Y != ptB.Y):
+        return ( (ptA.X - ptB.X)**2 + (ptA.Y - ptB.Y)**2 ) ** (1/2)
+    return 0.0

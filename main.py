@@ -19,6 +19,7 @@ if __name__ == "__main__":
     noiseMaker = Noise((0, 50), (0, 50))
     noiseData = noiseMaker.getRandom(scaleFactor=1)
     M = Map(noiseData)
+    
     # Display the inputted raw data values
     # M.showRawPointValues()
 

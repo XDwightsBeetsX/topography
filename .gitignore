@@ -13,8 +13,8 @@ __pycache__
 # ========================= #
 .egg
 .egg-info
-wheel
-wheels
-distro
-build
-dist
+.wheel
+.wheels
+.distro
+.build
+.dist

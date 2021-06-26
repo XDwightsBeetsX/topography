@@ -9,7 +9,7 @@ import random
 
 class Noise(object):
     """
-    Generates Noise...
+    Noise generator object. Instantiate it with an x and y range.
     """
 
     def __init__(self, xRange, yRange):
@@ -21,15 +21,15 @@ class Noise(object):
         self.YMin = yRange[0]
         self.YMax = yRange[1]
     
-    def getRandom(self, scaleFactor=1, noiseSeed=None):
+    def getRandom(self, scaleFactor=1, seed=None):
         """
         Generates a list of PointValues with random values in the range [-1, 1]
 
         Optionally scale the noise by `scaleFactor`
         """
         
-        if noiseSeed != None:
-            random.seed(noiseSeed)
+        if seed != None:
+            random.seed(seed)
         else:
             random.seed()
         

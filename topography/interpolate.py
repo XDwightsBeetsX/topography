@@ -28,3 +28,25 @@ def inverse_weight(ptA, ptB, p=2):
         return 1.0
     else:
         return 1 / (d**p)
+
+
+def nearest_neighbor(thisPt, rawPts, limit):
+    """
+    returns the nearest neighbor value.  
+    In the case of several equidistant `rawPts`, returns an average of the nearest values
+    """
+    nnVals = []
+    currMin = limit
+    for pt in rawPts:
+        d = euclidian_distance(thisPt, pt)
+        if d == currMin:
+            nnVals.append(pt.Z)
+        elif d < currMin:
+            nnVals.clear()
+            currMin = d
+            nnVals.append(pt.Z)
+    
+    # if tie, return average of closest values
+    if len(nnVals) == 1:
+        return nnVals[0]
+    return sum(nnVals) / len(nnVals)

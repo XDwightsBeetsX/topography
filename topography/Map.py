@@ -5,7 +5,7 @@ Stores known PointValues, and allows for performing various interpolation scheme
 """
 
 from .Points import PointValue
-from .interpolate import inverse_weight
+from .interpolate import inverse_weight, nearest_neighbor
 
 from matplotlib import pyplot as plt
 
@@ -25,11 +25,13 @@ class Map(object):
     """
     def __init__(self, rawPointValues, xRange=None, yRange=None):
         """
-        `RawPointValues` is the list of known PointValues
+        `rawPointValues` is the list of known PointValues
+
+        Optionally, specify a tuple of (min, max) for `xRange` and `yRange`
         """
         def getXYRange(pointValues):
             """
-            Gets the xRange and yRange in tuples for a set of input PointValues
+            Returns an `xRange` and `yRange` in tuples for a set of input PointValues
             """
             xMin, xMax = pointValues[0].X, pointValues[0].X
             yMin, yMax = pointValues[0].Y, pointValues[0].Y
@@ -77,7 +79,7 @@ class Map(object):
     
     def clearLast(self):
         """
-        Clears the last filled matrix and PointValues list.
+        Clears the last `FilledPointValues` list and the `Filled X, Y, and Z` 1d lists
         """
         self.FilledX.clear()
         self.FilledY.clear()
@@ -86,7 +88,7 @@ class Map(object):
     
     def getFilledPointValue(self, x, y):
         """
-        Attempts to find a PointValue in FilledPointValues
+        Attempts to find a PointValue in `self.FilledPointValues`
 
         Throws Exception if not found
         """
@@ -175,6 +177,7 @@ class Map(object):
         Performs Inverse Distance Weighted interpolation.  
         Can toggle `showWhenDone` to disable map output.
         """
+        plot_title = "Inverse Distance Map Interpolation"
         pts = []
 
         # interpolate the PointValues by idw
@@ -200,7 +203,37 @@ class Map(object):
 
         # show plot of interpolated values
         if showWhenDone:
-            self.showPlot(title="Inverse Distance Map Interpolation")
+            self.showPlot(title=plot_title)
 
-    def nn(self, filename="nn"):
-        pass
+    def nn(self, showWhenDone=True):
+        """
+        Performs Nearest Neighbor interpolation.  
+        Can toggle `showWhenDone` to disable map output.  
+
+        In the case of ties, an average of the nearest is calculated.      
+        """
+        plot_title = "Nearest Neighbor Map Interpolation"
+        pts = []
+
+        # interpolate the PointValues by nn
+        yL, yH = self.YRange[0], self.YRange[1]
+        xL, xH = self.XRange[0], self.XRange[1]
+        longest = ( (yH - yL)**2 + (xH - xL)**2 ) ** (1/2)
+        for y in range(yL, yH):
+            for x in range(xL, xH):
+                newPt = PointValue(x, y, 0)
+
+                nnVal = nearest_neighbor(newPt, self.RawPointValues, longest)
+
+                newPt.Z = nnVal
+                self.FilledX.append(x)
+                self.FilledY.append(y)
+                self.FilledZ.append(nnVal)
+                pts.append(newPt)
+        
+        # save to cache
+        self.FilledPointValues = pts
+
+        # show plot of interpolated values
+        if showWhenDone:
+            self.showPlot(title=plot_title)

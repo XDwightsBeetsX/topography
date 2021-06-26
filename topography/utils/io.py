@@ -26,3 +26,7 @@ def getPointValuesFromCsv(filename):
             return pointValues
     except Exception:
         print(f"[MAP]-[readFromCsv]-[ERROR]-could not read pointValues from file '{filename}'")
+
+
+def generateRandomPointValues(xRange, yRange):
+    pass

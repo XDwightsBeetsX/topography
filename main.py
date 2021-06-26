@@ -11,13 +11,14 @@ if __name__ == "__main__":
     rawData = getPointValuesFromCsv("tests/data/20x20.csv")
     
     # make map from rawData
-    M = Map(rawData, xRange=(0, 10))
+    M = Map(rawData)
 
     # Display the inputted raw data values
     # M.showRawPointValues()
 
     # interpolate using inverse distance weighting
-    M.idw(showWhenDone=True)
+    # M.idw(showWhenDone=True)
+    M.nn(showWhenDone=True)
     
     # Display the interpolated data values
     # M.showFilledPointValues()

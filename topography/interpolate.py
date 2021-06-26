@@ -1,8 +1,5 @@
 """
 Contains utility and math methods for use by Map
-
-TODO inverse_weight normalize/smoothen
-TODO inverse_weight neightborhood check
 """
 
 

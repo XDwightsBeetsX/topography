@@ -1,19 +1,20 @@
 # ========================= #
 # ======== Dev Envs ======= #
 # ========================= #
-idea/
-__pycache__/
+.vscode
+__pycache__
 .pytest_cache
-*.env
-*.venv
+.idea
+.env
+.venv
 
 # ========================= #
 # ========== Pkg ========== #
 # ========================= #
-*.egg
-*.egg-info
-wheel/
-wheels/
-distro/
-build/
-dist/
+.egg
+.egg-info
+.wheel
+.wheels
+.distro
+.build
+.dist

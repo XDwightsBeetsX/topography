@@ -26,7 +26,7 @@ class Map(object):
     def __init__(self, rawPointValues, xRange=None, yRange=None):
         """
         `rawPointValues` is the list of known PointValues
-
+        
         Optionally, specify a tuple of (min, max) for `xRange` and `yRange`
         """
         def getXYRange(pointValues):

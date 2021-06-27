@@ -5,9 +5,9 @@ from setuptools import setup, find_packages
 PKGNAME = "topography"
 
 # VERSION - CHANGE BEFORE RUNNING, PYPI WILL NOT UPLOAD
-release = 0
+release = 1
 feature = 0
-update = 2
+update = 0
 V = f"{release}.{feature}.{update}"
 print(f"[LOG] - Executing into version {V}")
 
@@ -15,7 +15,7 @@ print(f"[LOG] - Executing into version {V}")
 AUTH = "John Gutierrez"
 
 # KEYWORDS about the pkg
-KEYWORDS = ['topography', 'map', 'engineering']
+KEYWORDS = ['topography', 'map', 'engineering', 'python', 'terrain modelling', 'terrain']
 
 # Short Description
 SHORT_DESCR = "Perform interpolation on surfaces to generate topographic-style maps."

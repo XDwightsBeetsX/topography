@@ -69,10 +69,3 @@ M.idw(showWhenDone=True)
 # optionally, write to file as a matrix, the default is x, y, z columns
 M.writeLastToCsv("idw_20x20", writeAsMatrix=True)
 ```
-
-### ***Development with `twine`***
-
-```shell
-python setup.py sdist bdist_wheel
-twine upload -r pypi dist/* -u <username> -p <password>
-```

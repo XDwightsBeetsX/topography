@@ -16,12 +16,6 @@ Contains different approaches to modeling terrain and topographic-style maps in 
 
 *see the [requirements.txt](requirements.txt)*
 
-## ***Install***
-
-```shell
-pip install topography
-```
-
 ## ***Features***
 
 ### **[Inverse Distance Weighting (IDW)](/topography/docs/idw.md)**
@@ -30,17 +24,23 @@ A given point `P(x, y)` is determined by the values of its neighbors, inversely 
 
 `P` is more heavily influenced by nearer points via a weighting function `w(x, y)`.
 
+### **Steps**
+
+The value of `P(x, y)` is determined only by the closest raw data point.
+
+This approach works best to get a "feel" for larger datasets. With few input points, the resulting map has little detail.
+
+In the case of multiple equidistant points being closest, point values are stored, and averaged.
+
 ### **Nearest Neighbor (NN) *[in progress :construction_worker: :hammer_and_wrench:]***
 
-`P(x, y)` is determined only by the value of its nearest neighbor.
+## ***Install***
 
-This approach works better with a larger set of data points, or else the resulting map has little detail.
+```shell
+pip install topography
+```
 
-In the case of an exact tie, ***TODO***
-
-### **Spline *[in progress :construction_worker: :hammer_and_wrench:]***
-
-## ***Example***
+### ***Example***
 
 ```python
 from topography.Map import Map

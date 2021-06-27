@@ -4,8 +4,8 @@ Map is primary data struct of topography
 Stores known PointValues, and allows for performing various interpolation schemes on the raw data.  
 """
 
-from .Points import PointValue
-from .interpolate import inverse_weight, nearest_neighbor
+from .Points import Point, PointValue
+from .interpolate import euclidian_distance, inverse_weight, step
 
 from matplotlib import pyplot as plt
 
@@ -25,9 +25,9 @@ class Map(object):
     """
     def __init__(self, rawPointValues, xRange=None, yRange=None):
         """
-        `rawPointValues` is the list of known PointValues
-        
-        Optionally, specify a tuple of (min, max) for `xRange` and `yRange`
+        `rawPointValues` - list of known PointValues
+
+        `xRange` and `yRange` - manually specify a tuple of (min, max)
         """
         def getXYRange(pointValues):
             """
@@ -71,11 +71,24 @@ class Map(object):
                 self.XRange = xR
                 self.YRange = yR
     
-    def addPointValue(self, newPointValue):
+    def addRawPointValue(self, newPointValue):
         """
         Directly adds a PointValue to `self.RawPointValues`
         """
         self.RawPointValues.append(newPointValue)
+    
+    def removeRawPointValue(self, x, y):
+        """
+        Directly removes a PointValue at `(x, y)` from `self.RawPointValues`
+        
+        Throws Exception if not found
+        """
+        for pt in self.RawPointValues:
+            if pt.X == x and pt.Y == y:
+                self.RawPointValues.remove(pt)
+                return
+        
+        raise Exception(f"PointValue not found at [{x}, {y}]")
     
     def clearLast(self):
         """
@@ -90,6 +103,8 @@ class Map(object):
         """
         Attempts to find a PointValue in `self.FilledPointValues`
 
+        `x` and `y` - search coordinates
+        
         Throws Exception if not found
         """
         for pt in self.FilledPointValues:
@@ -127,7 +142,9 @@ class Map(object):
         """
         Writes series of PointValues in format:  
             x, y, z  
-        Can toggle `writeAsMatrix` to ouput in matrix format
+        
+        `filename` - output file name.  
+        `writeAsMatrix` - toggle to ouput in matrix format.
         """
         with open(filename + ".csv", "w") as f:
             matrix = self.getAsMatrix()
@@ -172,30 +189,27 @@ class Map(object):
 
         plt.show()
 
-    def idw(self, showWhenDone=True):
+    def idw(self, showWhenDone=True, neighborhoodSize=None):
         """
-        Performs Inverse Distance Weighted interpolation.  
-        Can toggle `showWhenDone` to disable map output.
+        Performs Inverse Distance Weighted interpolation.
+        
+        `showWhenDone` - toggle to disable map output.  
+        `neighborhoodSize` - manually choose the number of influencing points.
         """
         plot_title = "Inverse Distance Map Interpolation"
         pts = []
-
+        
         # interpolate the PointValues by idw
         for y in range(self.YRange[0], self.YRange[1]):
             for x in range(self.XRange[0], self.XRange[1]):
                 newPt = PointValue(x, y, 0)
-                newWt = 0
-                totWeight = 0
-                for rawPt in self.RawPointValues:
-                    wt = inverse_weight(newPt, rawPt)
-                    newWt += rawPt.Z * wt
-                    totWeight += wt
-                newWt /= totWeight
-                newPt.Z = newWt
+
+                idwVal = inverse_weight(newPt, self.RawPointValues, neighborhoodSize=neighborhoodSize)
+                newPt.Z = idwVal
 
                 self.FilledX.append(x)
                 self.FilledY.append(y)
-                self.FilledZ.append(newWt)
+                self.FilledZ.append(idwVal)
                 pts.append(newPt)
         
         # save to cache
@@ -204,10 +218,10 @@ class Map(object):
         # show plot of interpolated values
         if showWhenDone:
             self.showPlot(title=plot_title)
-
-    def nn(self, showWhenDone=True):
+    
+    def steps(self, showWhenDone=True):
         """
-        Performs Nearest Neighbor interpolation.  
+        Performs Step interpolation.  
         Can toggle `showWhenDone` to disable map output.  
 
         In the case of ties, an average of the nearest is calculated.      
@@ -215,17 +229,17 @@ class Map(object):
         plot_title = "Nearest Neighbor Map Interpolation"
         pts = []
 
-        # interpolate the PointValues by nn
+        # interpolate the PointValues by step
         yL, yH = self.YRange[0], self.YRange[1]
         xL, xH = self.XRange[0], self.XRange[1]
-        longest = ( (yH - yL)**2 + (xH - xL)**2 ) ** (1/2)
+        longest = euclidian_distance(Point(xL, yL), Point(xH, yH))
         for y in range(yL, yH):
             for x in range(xL, xH):
                 newPt = PointValue(x, y, 0)
 
-                nnVal = nearest_neighbor(newPt, self.RawPointValues, longest)
-
+                nnVal = step(newPt, self.RawPointValues, longest)
                 newPt.Z = nnVal
+
                 self.FilledX.append(x)
                 self.FilledY.append(y)
                 self.FilledZ.append(nnVal)

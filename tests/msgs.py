@@ -15,5 +15,5 @@ def running(methodName):
 def passed(methodName):
     print(f"{TEST_PREFIX} {methodName} - {PASSED}")
 
-def failed(methodName):
-    print(f"{TEST_PREFIX} {methodName} - {FAILED}")
+def failed(methodName, got, expected):
+    print(f"{TEST_PREFIX} {methodName} - {FAILED} - got {got} but expected {expected}")

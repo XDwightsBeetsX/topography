@@ -25,4 +25,4 @@ def getPointValuesFromCsv(filename):
                 pointValues.append(p)
             return pointValues
     except Exception:
-        print(f"[MAP]-[readFromCsv]-[ERROR]-could not read pointValues from file '{filename}'")
+        print(f"[IO] - [getPointValuesFromCsv] - [ERROR] - could not read pointValues from file '{filename}'")

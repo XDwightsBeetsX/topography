@@ -2,48 +2,65 @@
 Contains utility and math methods for use by Map
 """
 
+from .utils.pile import euclidian_distance
 
-def euclidian_distance(ptA, ptB):
+
+def inverse_weight(thisPt, rawPts, p=2, neighborhoodSize=None):
     """
-    Returns the shortest path distance between the two points
+    `thisPt` - unknown PointValue  
+    `rawPts` - the set of known PointValues  
+    `p` - (power) is set to 2 by default  
+    `neighborhoodSize` - integer number of nearest points to consider
+
+    returns the weight between two points. If a neighborhood is specified, only considers a number of the closest points
     """
-    if (ptA.X == ptB.X and ptA.Y == ptB.Y):
-        return 0.0
-    return ( (ptA.X - ptB.X)**2 + (ptA.Y - ptB.Y)**2 ) ** (1/2)
+    distsAndVals = {}
+    for pt in rawPts:
+        d = euclidian_distance(thisPt, pt)
+        if d in distsAndVals.keys():
+            distsAndVals[d].append(pt.Z)
+        else:
+            distsAndVals[d] = [pt.Z]
+        
+    # Check to see if only considering nearest neighborhoodSize points
+    distKeys = distsAndVals.keys()
+    if neighborhoodSize is not None:
+        distKeys = sorted(distKeys)
+    
+    totVal = 0
+    totWt = 0
+    ct = 0
+    for distKey in distKeys:
+        for val in distsAndVals[distKey]:
+            if neighborhoodSize is not None:
+                if neighborhoodSize <= ct:
+                    return totVal / totWt
+            wt = 1
+            if distKey != 0:
+                wt = 1 / (distKey**p)
+            totVal += wt * val
+            totWt += wt
+            ct += 1
+    
+    return totVal / totWt
 
-
-def inverse_weight(ptA, ptB, p=2):
+def step(thisPt, rawPts, limit):
     """
-    Uses Shepard's approach to inverse distance weighting
-
-    p (power) is typically set to 2
-
-    returns the weight between two points
-    """
-    d = euclidian_distance(ptA, ptB)
-    if d == 0:
-        return 1.0
-    else:
-        return 1 / (d**p)
-
-
-def nearest_neighbor(thisPt, rawPts, limit):
-    """
-    returns the nearest neighbor value.  
+    returns the nearest step value.  
     In the case of several equidistant `rawPts`, returns an average of the nearest values
     """
-    nnVals = []
+    stepVals = []
     currMin = limit
     for pt in rawPts:
         d = euclidian_distance(thisPt, pt)
         if d == currMin:
-            nnVals.append(pt.Z)
+            stepVals.append(pt.Z)
         elif d < currMin:
-            nnVals.clear()
+            stepVals.clear()
             currMin = d
-            nnVals.append(pt.Z)
+            stepVals.append(pt.Z)
     
     # if tie, return average of closest values
-    if len(nnVals) == 1:
-        return nnVals[0]
-    return sum(nnVals) / len(nnVals)
+    if len(stepVals) == 1:
+        return stepVals[0]
+    return sum(stepVals) / len(stepVals)

@@ -4,13 +4,13 @@ interpolate.euclidian_distance tests
 
 from topography.Points import PointValue
 from topography.interpolate import inverse_weight, euclidian_distance
-from ..msgs import running, passed, failed
+from tests.msgs import running, passed, failed
 
 import numpy as np
 from matplotlib import pyplot as plt
 
 # May want to toggle when running tests
-ShowPlots = True
+ShowPlots = False
 
 # Use constant for 1d tests
 Y = 0
@@ -29,15 +29,9 @@ def test_1d_p2():
     totPts = []
 
     for x in newXs:
-        totWt = 0
-        newWt = 0
-        interpolatedPt = PointValue(x, Y, newWt)
-        for rPt in rawPts:
-            wt = inverse_weight(interpolatedPt, rPt)
-            newWt += rPt.Z * wt
-            totWt += wt
-        newWt /= totWt
-        interpolatedPt.Z = newWt
+        interpolatedPt = PointValue(x, Y, 0)
+        interpVal = inverse_weight(interpolatedPt, rawPts)
+        interpolatedPt.Z = interpVal
         totPts.append(interpolatedPt)
     
     if ShowPlots:
@@ -71,15 +65,9 @@ def test_1d_cliff():
     totPts = []
 
     for x in newXs:
-        totWt = 0
-        newWt = 0
-        interpolatedPt = PointValue(x, Y, newWt)
-        for rPt in rawPts:
-            wt = inverse_weight(interpolatedPt, rPt)
-            newWt += rPt.Z * wt
-            totWt += wt
-        newWt /= totWt
-        interpolatedPt.Z = newWt
+        interpolatedPt = PointValue(x, Y, 0)
+        interpVal = inverse_weight(interpolatedPt, rawPts)
+        interpolatedPt.Z = interpVal
         totPts.append(interpolatedPt)
     
     if ShowPlots:
@@ -112,15 +100,9 @@ def test_1d_peak():
     totPts = []
 
     for x in newXs:
-        totWt = 0
-        newWt = 0
-        interpolatedPt = PointValue(x, Y, newWt)
-        for rPt in rawPts:
-            wt = inverse_weight(interpolatedPt, rPt)
-            newWt += rPt.Z * wt
-            totWt += wt
-        newWt /= totWt
-        interpolatedPt.Z = newWt
+        interpolatedPt = PointValue(x, Y, 0)
+        interpVal = inverse_weight(interpolatedPt, rawPts)
+        interpolatedPt.Z = interpVal
         totPts.append(interpolatedPt)
     
     if ShowPlots:
@@ -156,44 +138,20 @@ def test_1d_comparison():
     pts_p4 = []
 
     for x in newXs:
-        totWt_p1 = 0
-        totWt_p2 = 0
-        totWt_p3 = 0
-        totWt_p4 = 0
+        interpolatedPt_p1 = PointValue(x, Y, 0)
+        interpolatedPt_p2 = PointValue(x, Y, 0)
+        interpolatedPt_p3 = PointValue(x, Y, 0)
+        interpolatedPt_p4 = PointValue(x, Y, 0)
 
-        newWt_p1 = 0
-        newWt_p2 = 0            
-        newWt_p3 = 0
-        newWt_p4 = 0
-
-        interpolatedPt_p1 = PointValue(x, Y, newWt_p1)
-        interpolatedPt_p2 = PointValue(x, Y, newWt_p2)
-        interpolatedPt_p3 = PointValue(x, Y, newWt_p3)
-        interpolatedPt_p4 = PointValue(x, Y, newWt_p4)
-        for rPt in rawPts:
-            wt_p1 = inverse_weight(interpolatedPt_p1, rPt, p=p1)
-            wt_p2 = inverse_weight(interpolatedPt_p2, rPt, p=p2)
-            wt_p3 = inverse_weight(interpolatedPt_p3, rPt, p=p3)
-            wt_p4 = inverse_weight(interpolatedPt_p4, rPt, p=p4)
-
-            newWt_p1 += rPt.Z * wt_p1
-            newWt_p2 += rPt.Z * wt_p2
-            newWt_p3 += rPt.Z * wt_p3
-            newWt_p4 += rPt.Z * wt_p4
-            
-            totWt_p1 += wt_p1
-            totWt_p2 += wt_p2
-            totWt_p3 += wt_p3
-            totWt_p4 += wt_p4
-        newWt_p1 /= totWt_p1
-        newWt_p2 /= totWt_p2
-        newWt_p3 /= totWt_p3
-        newWt_p4 /= totWt_p4
+        interpVal1 = inverse_weight(interpolatedPt_p1, rawPts, p=p1)
+        interpVal2 = inverse_weight(interpolatedPt_p2, rawPts, p=p2)
+        interpVal3 = inverse_weight(interpolatedPt_p3, rawPts, p=p3)
+        interpVal4 = inverse_weight(interpolatedPt_p4, rawPts, p=p4)
         
-        interpolatedPt_p1.Z = newWt_p1
-        interpolatedPt_p2.Z = newWt_p2
-        interpolatedPt_p3.Z = newWt_p3
-        interpolatedPt_p4.Z = newWt_p4
+        interpolatedPt_p1.Z = interpVal1
+        interpolatedPt_p2.Z = interpVal2
+        interpolatedPt_p3.Z = interpVal3
+        interpolatedPt_p4.Z = interpVal4
         
         pts_p1.append(interpolatedPt_p1)
         pts_p2.append(interpolatedPt_p2)

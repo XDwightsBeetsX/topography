@@ -42,7 +42,6 @@ def inverse_weight(thisPt, rawPts, p=2, neighborhoodSize=None):
             totWt += wt
             ct += 1
     
-    print(f"{totVal} / {totWt} = {totVal / totWt}")
     return totVal / totWt
 
 def step(thisPt, rawPts, limit):

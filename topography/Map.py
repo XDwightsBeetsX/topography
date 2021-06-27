@@ -71,11 +71,24 @@ class Map(object):
                 self.XRange = xR
                 self.YRange = yR
     
-    def addPointValue(self, newPointValue):
+    def addRawPointValue(self, newPointValue):
         """
         Directly adds a PointValue to `self.RawPointValues`
         """
         self.RawPointValues.append(newPointValue)
+    
+    def removeRawPointValue(self, x, y):
+        """
+        Directly removes a PointValue at `(x, y)` from `self.RawPointValues`
+        
+        Throws Exception if not found
+        """
+        for pt in self.RawPointValues:
+            if pt.X == x and pt.Y == y:
+                self.RawPointValues.remove(pt)
+                return
+        
+        raise Exception(f"PointValue not found at [{x}, {y}]")
     
     def clearLast(self):
         """
@@ -193,7 +206,7 @@ class Map(object):
 
                 idwVal = inverse_weight(newPt, self.RawPointValues, neighborhoodSize=neighborhoodSize)
                 newPt.Z = idwVal
-                
+
                 self.FilledX.append(x)
                 self.FilledY.append(y)
                 self.FilledZ.append(idwVal)

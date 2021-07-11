@@ -3,7 +3,7 @@ Example driver program
 """
 
 from topography.Map import Map
-from topography.Noise import Noise
+# from topography.Noise import Noise
 
 from topography.utils.io import getPointValuesFromCsv
 

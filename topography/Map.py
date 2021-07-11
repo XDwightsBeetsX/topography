@@ -203,7 +203,6 @@ class Map(object):
         for y in range(self.YRange[0], self.YRange[1]):
             for x in range(self.XRange[0], self.XRange[1]):
                 newPt = PointValue(x, y, 0)
-
                 idwVal = inverse_weight(newPt, self.RawPointValues, neighborhoodSize=neighborhoodSize)
                 newPt.Z = idwVal
 
@@ -232,12 +231,10 @@ class Map(object):
         # interpolate the PointValues by step
         yL, yH = self.YRange[0], self.YRange[1]
         xL, xH = self.XRange[0], self.XRange[1]
-        longest = euclidian_distance(Point(xL, yL), Point(xH, yH))
         for y in range(yL, yH):
             for x in range(xL, xH):
                 newPt = PointValue(x, y, 0)
-
-                nnVal = step(newPt, self.RawPointValues, longest)
+                nnVal = step(newPt, self.RawPointValues)
                 newPt.Z = nnVal
 
                 self.FilledX.append(x)

@@ -38,6 +38,7 @@ In the case of multiple equidistant points being closest, point values are store
 ```shell
 pip install topography
 ```
+
 ### ***Requirements***
 
 - `numpy`

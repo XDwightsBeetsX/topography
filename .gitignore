@@ -11,10 +11,6 @@ __pycache__
 # ========================= #
 # ========== Pkg ========== #
 # ========================= #
-.egg
-.egg-info
-.wheel
-.wheels
-.distro
-.build
-.dist
+build
+dist
+*.egg-info

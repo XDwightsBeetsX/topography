@@ -9,8 +9,6 @@ from topography.Map import Map
 from topography.Points import PointValue
 from tests.msgs import running, passed, failed
 
-import numpy as np
-
 
 def getTestMap(w, h, val=0):
     pts = []
@@ -23,7 +21,7 @@ def getTestMap(w, h, val=0):
 
 class TestMap(object):
     def test_ctor(self):
-        testName = "TestMapWxH.test_ctor"
+        testName = "TestMap.test_ctor"
         running(testName)
         correct = True
         
@@ -46,7 +44,7 @@ class TestMap(object):
         assert correct
     
     def test_addPointValue(self):
-        testName = "TestMapWxH.test_addPointValue"
+        testName = "TestMap.test_addPointValue"
         running(testName)
         correct = True
 
@@ -64,7 +62,7 @@ class TestMap(object):
         assert correct
 
     def test_removeRawPointValue(self):
-        testName = "TestMapWxH.test_removeRawPointValue"
+        testName = "TestMap.test_removeRawPointValue"
         running(testName)
         correct = True
 

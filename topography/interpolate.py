@@ -7,12 +7,15 @@ from .utils.pile import euclidian_distance
 
 def inverse_weight(thisPt, rawPts, p=2, neighborhoodSize=None):
     """
-    `thisPt` - unknown PointValue  
-    `rawPts` - the set of known PointValues  
-    `p` - (power) is set to 2 by default  
+    `thisPt` - unknown PointValue
+
+    `rawPts` - the set of known PointValues
+
+    `p` - (power) is set to 2 by default
+
     `neighborhoodSize` - integer number of nearest points to consider
 
-    returns the weight between two points. If a neighborhood is specified, only considers a number of the closest points
+    returns the weight between two points. If a `neighborhoodSize` is specified, only considers a number of the closest points.
     """
     distsAndVals = {}
     for pt in rawPts:
@@ -44,13 +47,19 @@ def inverse_weight(thisPt, rawPts, p=2, neighborhoodSize=None):
     
     return totVal / totWt
 
-def step(thisPt, rawPts, limit):
+
+def step(thisPt, rawPts):
     """
-    returns the nearest step value.  
-    In the case of several equidistant `rawPts`, returns an average of the nearest values
+    `thisPt` - unknown PointValue
+
+    `rawPts` - the set of known PointValues
+
+    returns the nearest step value to `thisPt` from `rawPts`.
+
+    In the case of several equidistant `rawPts`, returns an average of the nearest values.
     """
     stepVals = []
-    currMin = limit
+    currMin = euclidian_distance(thisPt, rawPts[0])
     for pt in rawPts:
         d = euclidian_distance(thisPt, pt)
         if d == currMin:

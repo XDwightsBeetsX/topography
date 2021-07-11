@@ -6,8 +6,6 @@ from topography.Points import Point, PointValue
 from topography.interpolate import inverse_weight
 from tests.msgs import running, passed, failed
 
-from matplotlib import pyplot as plt
-
 
 def test_1_overlapping():
     testName = "test_1_overlapping"
@@ -25,7 +23,6 @@ def test_1_overlapping():
     gotWt = inverse_weight(p, [pv])
     
     correct = gotWt == expWt
-    
     if correct: passed(testName)
     else: failed(testName, gotWt, expWt)
     assert correct
@@ -48,7 +45,6 @@ def test_2_singleRawPt():
     gotWt = inverse_weight(p, [pv])
     
     correct = gotWt == expWt
-    
     if correct: passed(testName)
     else: failed(testName, gotWt, expWt)
     assert correct
@@ -72,7 +68,6 @@ def test_3_symmetric():
     gotWt2 = inverse_weight(p2, [pv])
 
     correct = gotWt1 == gotWt2
-    
     if correct: passed(testName)
     else: failed(testName, f"{gotWt1} != {gotWt2}", f"{gotWt1} == {gotWt2}")
     assert correct

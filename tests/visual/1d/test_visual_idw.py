@@ -1,10 +1,9 @@
 """
-interpolate.euclidian_distance tests
+1d visual inverse distance tests
 """
 
 from topography.Points import PointValue
-from topography.interpolate import inverse_weight, euclidian_distance
-from tests.msgs import running, passed, failed
+from topography.interpolate import inverse_weight
 
 import numpy as np
 from matplotlib import pyplot as plt

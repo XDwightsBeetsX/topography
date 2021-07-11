@@ -13,7 +13,7 @@ Contains different approaches to modeling terrain and topographic-style maps in 
 
 ### **[Inverse Distance Weighting (IDW)](/topography/docs/idw.md)**
 
-A given point `P(x, y)` is determined by the values of its neighbors, inversely to the distance of each neighbor.  
+A given point `P(x, y)` is determined by the values of its neighbors, inversely proportional to the distance of each neighbor.  
 
 `P` is more heavily influenced by nearer points via a weighting function `w(x, y)`.
 
@@ -25,7 +25,11 @@ This approach works best to get a "feel" for larger datasets. With few input poi
 
 In the case of multiple equidistant points being closest, point values are stored, and averaged.
 
-### **Nearest Neighbor (NN)**
+### **Bilinear**
+
+*in progress :construction_worker: :hammer_and_wrench:*
+
+### **Bicubic**
 
 *in progress :construction_worker: :hammer_and_wrench:*
 
@@ -47,25 +51,26 @@ pip install topography
 from topography.Map import Map
 from topography.utils.io import getPointValuesFromCsv
 
-# make map from recorded data
-rawData = getPointValuesFromCsv("tests/data/20x20.csv")
-M = Map(rawData)
-
-# make map from noise data
+# # make map from noise data
 # noiseMaker = Noise((0, 50), (0, 50))
 # noiseData = noiseMaker.getRandom(scaleFactor=1)
 # M = Map(noiseData)
 
-# Display the inputted raw data values
-# M.showRawPointValues()
+# make map from recorded data
+rawData = getPointValuesFromCsv("tests/data/20x20.csv")
+M = Map(rawData)
 
-# interpolate using inverse distance weighting
+# # Display the inputted raw data values
+M.showRawPointValues()
+
+# interpolate the Map
 M.idw(showWhenDone=True)
 
 # Display the interpolated data values
-# M.showFilledPointValues()
+M.showFilledPointValues()
 
 # Save the data to a .csv file
-# optionally, write to file as a matrix, the default is x, y, z columns
+# optionally, write to file as a matrix
+# default is x, y, z
 M.writeLastToCsv("idw_20x20", writeAsMatrix=True)
 ```
